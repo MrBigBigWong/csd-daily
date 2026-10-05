@@ -16,7 +16,7 @@
     --s4: #7A2032;
     --s5: #6B4714;
     --s6: #163E5C;
-    --nav-offset: 64px;
+    --nav-offset: 70px;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; scroll-padding-top: var(--nav-offset); }
@@ -54,7 +54,7 @@
     border: 2px solid #141414;
   }
   .skip:focus { position: fixed; top: 10px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 var(--pad) 48px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 var(--pad) max(3rem, calc(100vh - 32rem)); }
   .mast { padding: 22px 0 16px; border-bottom: 1px solid #141414; }
   .eyebrow {
     margin: 0 0 8px;
@@ -117,7 +117,7 @@
     color: var(--red);
     border-bottom-color: var(--red);
   }
-  .day { scroll-margin-top: var(--nav-offset); }
+  .day { scroll-margin-top: 0; }
   h2.daytitle {
     margin: 26px 0 4px;
     padding-bottom: 8px;
@@ -241,7 +241,7 @@
   footer a { font-weight: 700; }
   @media (max-width: 640px) {
     :root { --pad: 14px; }
-    .wrap { padding-bottom: 36px; }
+    .wrap { padding-bottom: max(2rem, calc(100vh - 28rem)); }
     .mast { padding: 16px 0 14px; }
     nav a { padding: 11px 10px 9px; font-size: 15px; }
     .card { padding: 13px 13px 14px; }
@@ -429,6 +429,7 @@
     return document.getElementById(a.getAttribute('href').slice(1));
   }).filter(Boolean);
   if (!sections.length) return;
+  var lock = null;
   function setCurrent(id) {
     links.forEach(function (a) {
       if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'date');
@@ -436,13 +437,33 @@
     });
   }
   function update() {
+    var navBottom = nav.getBoundingClientRect().bottom;
+    var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    var line = navBottom + 36;
+    if (lock) {
+      var locked = document.getElementById(lock);
+      var top = locked ? locked.getBoundingClientRect().top : 0;
+      var settled = !locked || top <= line || window.scrollY >= maxScroll - 2;
+      setCurrent(lock);
+      if (!settled) return;
+      lock = null;
+    }
     var id = sections[0].id;
-    var line = 72;
-    sections.forEach(function (s) {
-      if (s.getBoundingClientRect().top <= line) id = s.id;
-    });
+    if (window.scrollY >= maxScroll - 2) {
+      id = sections[sections.length - 1].id;
+    } else {
+      sections.forEach(function (s) {
+        if (s.getBoundingClientRect().top <= line) id = s.id;
+      });
+    }
     setCurrent(id);
   }
+  links.forEach(function (a) {
+    a.addEventListener('click', function () {
+      lock = a.getAttribute('href').slice(1);
+      setCurrent(lock);
+    });
+  });
   var ticking = false;
   window.addEventListener('scroll', function () {
     if (ticking) return;
