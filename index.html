@@ -36,8 +36,8 @@
   body::before {
     content: "";
     display: block;
-    height: 6px;
-    background: linear-gradient(var(--accent), var(--accent)) 0 0 / 100% 4px no-repeat, var(--ink);
+    height: 5px;
+    background: var(--accent);
   }
   ::selection { background: var(--accent); color: #fff; }
   a { color: var(--ink); }
@@ -150,10 +150,9 @@
   .gnum {
     display: inline-block;
     margin: 0 0 6px;
-    padding: 1px 8px;
-    color: var(--g);
-    background: var(--g-soft);
-    border: 1px solid color-mix(in srgb, var(--g) 28%, white);
+    padding: 2px 9px;
+    color: var(--card);
+    background: var(--g);
     border-radius: 2px;
     font-size: 13px;
     font-weight: 800;
@@ -174,9 +173,9 @@
   }
   .card {
     padding: 14px 16px 16px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-left: 4px solid var(--g);
+    background: color-mix(in srgb, var(--g) 11%, var(--card));
+    border: 1px solid color-mix(in srgb, var(--g) 22%, var(--line));
+    border-left: 5px solid var(--g);
     border-radius: 3px;
   }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }
