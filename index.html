@@ -6,19 +6,29 @@
 <title>公民科·每日例子｜2026年10月5日</title>
 <style>
   :root {
-    --ink: #121212;
-    --muted: #5a5a5a;
-    --line: #e6e6e6;
-    --red: #B80000;
-    --bg: #fff;
+    --paper: #f3efe6;
+    --card: #fffdf8;
+    --ink: #1a2438;
+    --muted: #5a6272;
+    --line: #e0d6c8;
+    --accent: #9b2336;
+    --accent-soft: #f7ecee;
+    --s4: #9b2336;
+    --s4-soft: #f7ecee;
+    --s5: #0e6a64;
+    --s5-soft: #e6f2f1;
+    --s6: #2c4c82;
+    --s6-soft: #e9eef6;
+    --serif: "Songti TC", "Songti SC", "STSong", "PMingLiU", "Noto Serif CJK TC", "Source Han Serif TC", Palatino, "Palatino Linotype", serif;
+    --sans: "PingFang HK", "PingFang TC", "Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
     color: var(--ink);
-    background: var(--bg);
-    font-family: "Helvetica Neue", Helvetica, Arial, "PingFang HK", "PingFang TC", "Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    background: var(--paper);
+    font-family: var(--sans);
     font-size: 17px;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
@@ -26,17 +36,18 @@
   body::before {
     content: "";
     display: block;
-    height: 4px;
-    background: var(--red);
+    height: 5px;
+    background: var(--accent);
   }
+  ::selection { background: var(--accent); color: #fff; }
   a { color: var(--ink); }
-  a:hover { color: var(--red); }
-  a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  a:hover { color: var(--accent); }
+  a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .skip {
     position: absolute;
     left: 8px;
     top: -48px;
-    background: #fff;
+    background: var(--card);
     color: var(--ink);
     padding: 8px 12px;
     font-size: 17px;
@@ -45,20 +56,25 @@
   }
   .skip:focus { top: 8px; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 8px 16px 48px; }
-  .mast { padding: 18px 0 14px; }
+  .mast {
+    padding: 20px 0 16px;
+    border-bottom: 3px solid var(--ink);
+  }
   .eyebrow {
-    margin: 0 0 6px;
-    color: var(--red);
+    margin: 0 0 8px;
+    color: var(--accent);
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: .06em;
+    letter-spacing: .12em;
   }
   h1 {
     margin: 0;
-    font-size: clamp(34px, 6vw, 52px);
-    line-height: 1.02;
-    letter-spacing: -.03em;
-    font-weight: 800;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 54px);
+    line-height: 1.05;
+    letter-spacing: .01em;
+    font-weight: 700;
   }
   .date {
     margin: 10px 0 0;
@@ -66,17 +82,25 @@
     font-size: 16px;
     font-weight: 600;
   }
+  .date::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    background: var(--accent);
+    vertical-align: 1px;
+  }
   nav {
     position: sticky;
     top: 0;
     z-index: 3;
     display: flex;
     flex-wrap: wrap;
-    gap: 0;
+    gap: 4px 0;
     margin: 0 -16px;
     padding: 0 16px;
-    background: #fff;
-    border-top: 1px solid var(--line);
+    background: var(--paper);
     border-bottom: 1px solid var(--line);
   }
   nav a {
@@ -84,93 +108,129 @@
     color: var(--ink);
     font-weight: 700;
     font-size: 17px;
-    padding: 12px 16px;
-    border-bottom: 3px solid transparent;
+    padding: 12px 16px 10px;
+    border-bottom: 3px solid var(--accent);
   }
   nav a:hover,
   nav a:focus-visible {
-    color: var(--red);
-    border-bottom-color: var(--red);
+    color: var(--accent);
+    background: var(--accent-soft);
   }
-  .day { scroll-margin-top: 58px; }
+  .day { scroll-margin-top: 64px; }
   .daytitle {
-    margin: 28px 0 0;
-    padding-bottom: 8px;
+    margin: 28px 0 4px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--ink);
+    color: var(--ink);
+    font-family: var(--serif);
     font-size: clamp(28px, 4vw, 40px);
-    line-height: 1.1;
-    font-weight: 800;
-    letter-spacing: -.03em;
-  }
-  .grade { margin: 0 0 8px; }
-  .ghead { margin: 18px 0 2px; }
-  .gnum {
-    margin: 0;
-    font-size: 13px;
+    line-height: 1.15;
     font-weight: 700;
-    letter-spacing: .08em;
-    color: var(--muted);
+    letter-spacing: .02em;
+  }
+  .grade { margin: 0 0 16px; --g: var(--accent); --g-soft: var(--accent-soft); }
+  .grade.s4 { --g: var(--s4); --g-soft: var(--s4-soft); }
+  .grade.s5 { --g: var(--s5); --g-soft: var(--s5-soft); }
+  .grade.s6 { --g: var(--s6); --g-soft: var(--s6-soft); }
+  .ghead {
+    margin: 20px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .ghead::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 56px;
+    height: 3px;
+    background: var(--g);
+  }
+  .gnum {
+    display: inline-block;
+    margin: 0 0 6px;
+    padding: 2px 9px;
+    color: var(--card);
+    background: var(--g);
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    line-height: 1.5;
   }
   .ghead h2 {
-    margin: 2px 0 0;
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--serif);
     font-size: clamp(20px, 2.5vw, 26px);
-    line-height: 1.25;
-    font-weight: 800;
-    letter-spacing: -.02em;
+    line-height: 1.3;
+    font-weight: 700;
   }
-  .cards { display: grid; gap: 0 32px; align-items: start; }
+  .cards { display: grid; gap: 14px; align-items: start; }
   @media (min-width: 860px) {
     .cards { grid-template-columns: 1fr 1fr; }
   }
   .card {
-    padding: 16px 2px 16px 12px;
-    border-left: 3px solid #141414;
-    border-bottom: 1px solid var(--line);
+    padding: 14px 16px 16px;
+    background: color-mix(in srgb, var(--g) 11%, var(--card));
+    border: 1px solid color-mix(in srgb, var(--g) 22%, var(--line));
+    border-left: 5px solid var(--g);
+    border-radius: 3px;
   }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }
   .chip {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: .02em;
-    line-height: 1.4;
-    color: #333;
-    border: 1px solid #d0d0d0;
+    letter-spacing: .04em;
+    line-height: 1.45;
     border-radius: 2px;
-    padding: 0 6px;
-    background: transparent;
+    padding: 0 7px;
   }
-  .unit { color: #444; font-weight: 650; }
+  .chip.form {
+    color: var(--g);
+    background: var(--g-soft);
+    border: 1px solid color-mix(in srgb, var(--g) 30%, white);
+  }
+  .chip.unit {
+    color: var(--muted);
+    font-weight: 650;
+    letter-spacing: 0;
+    background: transparent;
+    border: 1px solid var(--line);
+  }
   .card h3 {
     margin: 0 0 6px;
+    font-family: var(--serif);
     font-size: clamp(20px, 2.2vw, 24px);
-    line-height: 1.28;
-    font-weight: 800;
-    letter-spacing: -.015em;
+    line-height: 1.35;
+    font-weight: 700;
     text-wrap: pretty;
   }
   .card h3 a { text-decoration: none; }
-  .card h3 a:hover { text-decoration: underline; }
+  .card h3 a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
   .meta { margin: 0; color: var(--muted); font-size: 14px; font-weight: 600; }
   .why {
     margin: 10px 0 0;
     padding-top: 8px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--line);
     font-size: 16px;
   }
-  .why b { margin-right: 4px; }
+  .why b { margin-right: 4px; color: var(--g); }
   footer {
-    margin-top: 28px;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 3px solid var(--ink);
     color: var(--muted);
     font-size: 15px;
   }
   footer p { margin: 0 0 6px; }
-  footer a { color: var(--ink); }
+  footer a { color: var(--ink); text-underline-offset: 2px; }
+  footer a:hover { color: var(--accent); }
   @media (max-width: 640px) {
     .wrap { padding: 8px 14px 36px; }
     nav { margin: 0 -14px; padding: 0 8px; }
-    nav a { padding: 12px 10px; }
+    nav a { padding: 12px 10px 10px; }
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -193,7 +253,7 @@
   <main id="main">
     <section id="day-1005" class="day">
       <h2 class="daytitle">10月5日</h2>
-      <section class="grade">
+      <section class="grade s4">
         <header class="ghead">
           <p class="gnum">中四</p>
           <h2>主題一：「一國兩制」下的香港</h2>
@@ -201,7 +261,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中四</span>
+              <span class="chip form">中四</span>
               <span class="chip unit">「一國兩制」的內涵和實踐</span>
             </div>
             <h3><a href="https://www.info.gov.hk/gia/general/202610/05/P2026100200506.htm" target="_blank" rel="noopener noreferrer">Speech by CE at Global Youth Powerhouse Summit 2026</a></h3>
@@ -210,7 +270,7 @@
           </article>
         </div>
       </section>
-      <section class="grade">
+      <section class="grade s5">
         <header class="ghead">
           <p class="gnum">中五</p>
           <h2>主題二：改革開放以來的國家</h2>
@@ -218,7 +278,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中五</span>
+              <span class="chip form">中五</span>
               <span class="chip unit">人民生活的轉變與綜合國力</span>
             </div>
             <h3><a href="http://gd.xinhuanet.com/20261005/778da2d79009457594d378888fdb0407/c.html" target="_blank" rel="noopener noreferrer">解碼流動中國的活力與韌性——2026年國慶假期半程觀察</a></h3>
@@ -227,7 +287,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中五</span>
+              <span class="chip form">中五</span>
               <span class="chip unit">國家的發展與香港融入國家發展大局</span>
             </div>
             <h3><a href="https://www.info.gov.hk/gia/general/202610/05/P2026100500216.htm" target="_blank" rel="noopener noreferrer">財經事務及庫務局局長出席立法會財經事務委員會政策簡報會就《香港第一個五年規劃》及二○二六年《施政報告》開場發言</a></h3>
@@ -236,7 +296,7 @@
           </article>
         </div>
       </section>
-      <section class="grade">
+      <section class="grade s6">
         <header class="ghead">
           <p class="gnum">中六</p>
           <h2>主題三：互聯相依的當代世界</h2>
@@ -244,7 +304,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">科技發展與資訊素養</span>
             </div>
             <h3><a href="https://www.info.gov.hk/gia/general/202610/05/P2026100200655.htm" target="_blank" rel="noopener noreferrer">Speech by PSITI at Global Youth Powerhouse Summit 2026</a></h3>
@@ -253,7 +313,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">可持續發展</span>
             </div>
             <h3><a href="https://www.rte.ie/news/world/2026/1005/1593982-pacific-nations-climate/" target="_blank" rel="noopener noreferrer">Pacific nations press climate action at pre-COP summit</a></h3>
@@ -266,7 +326,7 @@
 
     <section id="day-1004" class="day">
       <h2 class="daytitle">10月4日</h2>
-      <section class="grade">
+      <section class="grade s4">
         <header class="ghead">
           <p class="gnum">中四</p>
           <h2>主題一：「一國兩制」下的香港</h2>
@@ -274,7 +334,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中四</span>
+              <span class="chip form">中四</span>
               <span class="chip unit">「一國兩制」的內涵和實踐</span>
             </div>
             <h3><a href="https://www.news.gov.hk/chi/2026/10/20261004/20261004_112531_775.html" target="_blank" rel="noopener noreferrer">把握大勢 深化國際聯繫</a></h3>
@@ -283,7 +343,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中四</span>
+              <span class="chip form">中四</span>
               <span class="chip unit">國家情況與國民身份認同</span>
             </div>
             <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400326.htm" target="_blank" rel="noopener noreferrer">行政長官祝賀中國香港運動員在第二十屆亞洲運動會取得佳績</a></h3>
@@ -292,7 +352,7 @@
           </article>
         </div>
       </section>
-      <section class="grade">
+      <section class="grade s5">
         <header class="ghead">
           <p class="gnum">中五</p>
           <h2>主題二：改革開放以來的國家</h2>
@@ -300,7 +360,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中五</span>
+              <span class="chip form">中五</span>
               <span class="chip unit">人民生活的轉變與綜合國力</span>
             </div>
             <h3><a href="https://www.news.cn/fortune/20261004/cb1325cdfe4445dc86aac385e23b27fc/c.html" target="_blank" rel="noopener noreferrer">國慶假期過半消費市場平穩有序</a></h3>
@@ -309,7 +369,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中五</span>
+              <span class="chip form">中五</span>
               <span class="chip unit">人民生活的轉變與綜合國力</span>
             </div>
             <h3><a href="https://www.aljazeera.com/sports/2026/10/4/amid-teen-triumph-and-organisational-chaos-asian-games-close-in-japan" target="_blank" rel="noopener noreferrer">Amid teen triumph and organisational chaos, Asian Games close in Japan</a></h3>
@@ -318,7 +378,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中五</span>
+              <span class="chip form">中五</span>
               <span class="chip unit">國家的發展與香港融入國家發展大局</span>
             </div>
             <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400252.htm" target="_blank" rel="noopener noreferrer">保安局舉辦皇崗口岸社區體驗日</a></h3>
@@ -327,7 +387,7 @@
           </article>
         </div>
       </section>
-      <section class="grade">
+      <section class="grade s6">
         <header class="ghead">
           <p class="gnum">中六</p>
           <h2>主題三：互聯相依的當代世界</h2>
@@ -335,7 +395,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">經濟全球化</span>
             </div>
             <h3><a href="https://www.thestar.com.my/aseanplus/aseanplus-news/2026/10/04/beijing-criticises-push-for-eu-to-develop-section-301-style-trade-tool-to-counter-china" target="_blank" rel="noopener noreferrer">Beijing criticises push for EU to develop Section 301-style trade tool to counter China</a></h3>
@@ -344,7 +404,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">科技發展與資訊素養</span>
             </div>
             <h3><a href="https://www.cbsnews.com/news/ai-super-intelligence-force-trump-jay-clayton/" target="_blank" rel="noopener noreferrer">Trump announces formation of AI "Super Intelligence Force"</a></h3>
@@ -353,7 +413,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">科技發展與資訊素養</span>
             </div>
             <h3><a href="https://www.news.gov.hk/eng/2026/10/20261002/20261002_173044_997.html" target="_blank" rel="noopener noreferrer">Lab advances Chinese medicine tests</a></h3>
@@ -362,7 +422,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">可持續發展</span>
             </div>
             <h3><a href="https://www.sinchew.com.my/news/20261004/international/7908948" target="_blank" rel="noopener noreferrer">世界大國齊聚太平洋　共商氣候之戰</a></h3>
@@ -371,7 +431,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">可持續發展</span>
             </div>
             <h3><a href="https://news.rthk.hk/rthk/ch/component/k2/1872655-20261004.htm" target="_blank" rel="noopener noreferrer">環保署宣布新界東北堆填區擴建部分今日全面啓用</a></h3>
@@ -384,7 +444,7 @@
 
     <section id="day-1003" class="day">
       <h2 class="daytitle">10月3日</h2>
-      <section class="grade">
+      <section class="grade s4">
         <header class="ghead">
           <p class="gnum">中四</p>
           <h2>主題一：「一國兩制」下的香港</h2>
@@ -392,7 +452,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中四</span>
+              <span class="chip form">中四</span>
               <span class="chip unit">香港社會的多元文化特徵</span>
             </div>
             <h3><a href="https://www.hkcd.com.hk/hkcdweb/content/2026/10/03/content_8778393.html" target="_blank" rel="noopener noreferrer">警社攜手守護多元家庭 促進不同文化聯繫</a></h3>
@@ -401,7 +461,7 @@
           </article>
         </div>
       </section>
-      <section class="grade">
+      <section class="grade s5">
         <header class="ghead">
           <p class="gnum">中五</p>
           <h2>主題二：改革開放以來的國家</h2>
@@ -409,7 +469,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中五</span>
+              <span class="chip form">中五</span>
               <span class="chip unit">參與國際事務</span>
             </div>
             <h3><a href="https://www.chinanews.com.cn/cj/2026/10-03/10707460.shtml" target="_blank" rel="noopener noreferrer">「21世紀海上絲綢之路」航線已覆蓋全球100多個國家和地區</a></h3>
@@ -418,7 +478,7 @@
           </article>
         </div>
       </section>
-      <section class="grade">
+      <section class="grade s6">
         <header class="ghead">
           <p class="gnum">中六</p>
           <h2>主題三：互聯相依的當代世界</h2>
@@ -426,7 +486,7 @@
         <div class="cards">
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">公共衞生與人類健康</span>
             </div>
             <h3><a href="https://www.newindianexpress.com/world/2026/Oct/03/an-ebola-treatment-center-was-burned-down-as-the-death-toll-in-congo-passes-4000" target="_blank" rel="noopener noreferrer">An Ebola treatment center was burned down as the death toll in Congo passes 4,000</a></h3>
@@ -435,7 +495,7 @@
           </article>
           <article class="card">
             <div class="tags">
-              <span class="chip">中六</span>
+              <span class="chip form">中六</span>
               <span class="chip unit">公共衞生與人類健康</span>
             </div>
             <h3><a href="https://www.info.gov.hk/gia/general/202610/03/P2026100300657.htm" target="_blank" rel="noopener noreferrer">CHP records case of severe paediatric influenza infection</a></h3>
