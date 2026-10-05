@@ -5,62 +5,176 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>公民科·每日例子｜2026年10月5日</title>
 <style>
-  :root { --ink:#1a120e; --muted:#5c5348; --paper:#fff4ea; --card:#fffdfb; }
-  * { box-sizing:border-box; }
-  html { scroll-behavior:smooth; }
+  :root {
+    --ink: #121212;
+    --muted: #5a5a5a;
+    --line: #e6e6e6;
+    --red: #B80000;
+    --bg: #fff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
-    margin:0; color:var(--ink); background:
-      linear-gradient(90deg,#d61f45 0 33%,#e06a00 33% 66%,#0b6e91 66% 100%) top/100% 6px no-repeat,
-      var(--paper);
-    font-family:"PingFang HK","PingFang TC","Noto Sans CJK TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif;
-    font-size:17px; line-height:1.5;
+    margin: 0;
+    color: var(--ink);
+    background: var(--bg);
+    font-family: "Helvetica Neue", Helvetica, Arial, "PingFang HK", "PingFang TC", "Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
   }
-  a { color:#0b3d66; }
-  a:hover { color:#071e33; }
-  a:focus-visible { outline:3px solid #0b6e91; outline-offset:2px; }
-  .skip { position:absolute; left:8px; top:-48px; background:#fff; padding:6px 10px; font-size:17px; }
-  .skip:focus { top:8px; }
-  .wrap { max-width:1080px; margin:0 auto; padding:12px 14px 36px; }
-  .mast { padding:8px 0 0; }
-  .eyebrow { margin:0 0 2px; font-size:14px; letter-spacing:.08em; font-weight:700; color:var(--muted); }
-  h1 { margin:0; font-size:clamp(32px,5vw,44px); line-height:1.05; letter-spacing:-.03em; font-weight:800; }
+  body::before {
+    content: "";
+    display: block;
+    height: 4px;
+    background: var(--red);
+  }
+  a { color: var(--ink); }
+  a:hover { color: var(--red); }
+  a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .skip {
+    position: absolute;
+    left: 8px;
+    top: -48px;
+    background: #fff;
+    color: var(--ink);
+    padding: 8px 12px;
+    font-size: 17px;
+    z-index: 10;
+    border: 2px solid var(--ink);
+  }
+  .skip:focus { top: 8px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 8px 16px 48px; }
+  .mast { padding: 18px 0 14px; }
+  .eyebrow {
+    margin: 0 0 6px;
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -.03em;
+    font-weight: 800;
+  }
   .date {
-    display:inline-block; margin:8px 0 0; color:#1a120e;
-    font-weight:700; font-size:15px;
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 600;
   }
-  .purpose { margin:8px 0 0; font-size:17px; max-width:40em; }
   nav {
-    position:sticky; top:0; z-index:3; display:flex; gap:6px; flex-wrap:wrap;
-    padding:8px 0; background:#fff4ea;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 0 -16px;
+    padding: 0 16px;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
   nav a {
-    text-decoration:none; color:#fff; font-weight:800; border-radius:999px;
-    padding:6px 12px; font-size:17px;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 17px;
+    padding: 12px 16px;
+    border-bottom: 3px solid transparent;
   }
-  nav a.s4 { background:#d61f45; }
-  nav a.s5 { background:#e06a00; }
-  nav a.s6 { background:#0b6e91; }
-  .day { scroll-margin-top:56px; margin:0 0 8px; }
-  .daytitle { margin:10px 0 4px; font-size:clamp(26px,4vw,34px); line-height:1.1; font-weight:800; }
-  .grade { scroll-margin-top:56px; margin:0 0 18px; }
-  .ghead { display:flex; gap:10px; align-items:baseline; margin:4px 0 8px; }
-  .gnum { margin:0; font-size:clamp(28px,4vw,36px); line-height:1; font-weight:800; letter-spacing:-.03em; }
-  .ghead h2 { margin:0; font-size:clamp(20px,2.4vw,24px); line-height:1.25; }
-  .gnote { margin:2px 0 0; color:var(--muted); font-size:17px; }
-  .cards { display:grid; gap:10px; align-items:start; }
-  @media (min-width:860px) { .cards { grid-template-columns:1fr 1fr; } }
-  .card { background:var(--card); border-radius:12px; padding:10px 12px; }
-  .tags { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px; }
-  .chip { font-size:14px; font-weight:800; border-radius:999px; padding:2px 8px; line-height:1.35; }
-  .unit { color:#1a120e; font-weight:700; }
-  .card h3 { margin:0 0 4px; font-size:clamp(20px,2.2vw,23px); line-height:1.3; font-weight:800; letter-spacing:-.01em; }
-  .meta { margin:0 0 6px; color:var(--muted); font-size:14px; font-weight:650; }
-  .why { margin:0; border-radius:8px; padding:8px 10px; font-size:17px; }
-  .why b { margin-right:4px; }
-        footer { margin-top:8px; color:var(--muted); font-size:15px; }
-  footer p { margin:0 0 6px; }
-  @media (max-width:640px) { .wrap { padding:10px 12px 28px; } }
-  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  nav a:hover,
+  nav a:focus-visible {
+    color: var(--red);
+    border-bottom-color: var(--red);
+  }
+  .day { scroll-margin-top: 58px; }
+  .daytitle {
+    margin: 28px 0 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ink);
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -.03em;
+  }
+  .grade { margin: 0 0 8px; }
+  .ghead { margin: 18px 0 2px; }
+  .gnum {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--muted);
+  }
+  .ghead h2 {
+    margin: 2px 0 0;
+    font-size: clamp(20px, 2.5vw, 26px);
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -.02em;
+  }
+  .cards { display: grid; gap: 0 32px; align-items: start; }
+  @media (min-width: 860px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+  }
+  .card {
+    padding: 16px 2px 16px 12px;
+    border-left: 3px solid #141414;
+    border-bottom: 1px solid var(--line);
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .chip {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    line-height: 1.4;
+    color: #333;
+    border: 1px solid #d0d0d0;
+    border-radius: 2px;
+    padding: 0 6px;
+    background: transparent;
+  }
+  .unit { color: #444; font-weight: 650; }
+  .card h3 {
+    margin: 0 0 6px;
+    font-size: clamp(20px, 2.2vw, 24px);
+    line-height: 1.28;
+    font-weight: 800;
+    letter-spacing: -.015em;
+    text-wrap: pretty;
+  }
+  .card h3 a { text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; }
+  .meta { margin: 0; color: var(--muted); font-size: 14px; font-weight: 600; }
+  .why {
+    margin: 10px 0 0;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+    font-size: 16px;
+  }
+  .why b { margin-right: 4px; }
+  footer {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 15px;
+  }
+  footer p { margin: 0 0 6px; }
+  footer a { color: var(--ink); }
+  @media (max-width: 640px) {
+    .wrap { padding: 8px 14px 36px; }
+    nav { margin: 0 -14px; padding: 0 8px; }
+    nav a { padding: 12px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
@@ -72,154 +186,264 @@
     <p class="date">2026年10月5日（星期一）</p>
   </header>
   <nav aria-label="日期">
-    <a href="#day-1004" style="background:#d61f45">10月4日</a>
-    <a href="#day-1003" style="background:#e06a00">10月3日</a>
-    <a href="#day-1002" style="background:#0b6e91">10月2日</a>
+    <a href="#day-1005">10月5日</a>
+    <a href="#day-1004">10月4日</a>
+    <a href="#day-1003">10月3日</a>
   </nav>
   <main id="main">
+    <section id="day-1005" class="day">
+      <h2 class="daytitle">10月5日</h2>
+      <section class="grade">
+        <header class="ghead">
+          <p class="gnum">中四</p>
+          <h2>主題一：「一國兩制」下的香港</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中四</span>
+              <span class="chip unit">「一國兩制」的內涵和實踐</span>
+            </div>
+            <h3><a href="https://www.info.gov.hk/gia/general/202610/05/P2026100200506.htm" target="_blank" rel="noopener noreferrer">Speech by CE at Global Youth Powerhouse Summit 2026</a></h3>
+            <p class="meta">香港政府新聞公報 · 2026年10月5日</p>
+            <p class="why"><b>點解有用</b>行政長官李家超以視像向青年峰會致辭，話香港在「一國兩制」下連接內地與世界，角色是「超級聯繫人」和「超級增值人」。他又說上月公布的首份五年規劃和《施政報告》都對接國家發展策略，並把年輕人放在中心。可以用嚟答「一國兩制」點樣定出香港的位置，唔好只背口號。</p>
+          </article>
+        </div>
+      </section>
+      <section class="grade">
+        <header class="ghead">
+          <p class="gnum">中五</p>
+          <h2>主題二：改革開放以來的國家</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中五</span>
+              <span class="chip unit">人民生活的轉變與綜合國力</span>
+            </div>
+            <h3><a href="http://gd.xinhuanet.com/20261005/778da2d79009457594d378888fdb0407/c.html" target="_blank" rel="noopener noreferrer">解碼流動中國的活力與韌性——2026年國慶假期半程觀察</a></h3>
+            <p class="meta">新華網 · 2026年10月5日</p>
+            <p class="why"><b>點解有用</b>交通運輸部數據指10月1日至3日，全社會跨區域人員流動量分別有3.29億、3.06億同3.04億人次。10月1日全國鐵路發送旅客2 520.4萬人次，創單日新高。交通運輸部預計假期高速公路新能源車出行規模達日常的1.8倍；副部長李揚話，服務區累計建成充電設施約8.9萬個。可以用嚟講出行方式的轉變同交通建設，充電要排隊亦說明配套追唔上需求。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中五</span>
+              <span class="chip unit">國家的發展與香港融入國家發展大局</span>
+            </div>
+            <h3><a href="https://www.info.gov.hk/gia/general/202610/05/P2026100500216.htm" target="_blank" rel="noopener noreferrer">財經事務及庫務局局長出席立法會財經事務委員會政策簡報會就《香港第一個五年規劃》及二○二六年《施政報告》開場發言</a></h3>
+            <p class="meta">香港政府新聞公報 · 2026年10月5日</p>
+            <p class="why"><b>點解有用</b>許正宇向立法會講五年規劃同《施政報告》的財金措施，重點包括強化連接內地與世界的樞紐、與人民銀行探討優化貨幣互換，以及推進人民幣櫃台納入港股通。他重申政府開支仍以港元為主，聯繫匯率不會受影響。可以用嚟講香港點樣以金融融入國家發展大局，同時保留自己的貨幣制度。</p>
+          </article>
+        </div>
+      </section>
+      <section class="grade">
+        <header class="ghead">
+          <p class="gnum">中六</p>
+          <h2>主題三：互聯相依的當代世界</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">科技發展與資訊素養</span>
+            </div>
+            <h3><a href="https://www.info.gov.hk/gia/general/202610/05/P2026100200655.htm" target="_blank" rel="noopener noreferrer">Speech by PSITI at Global Youth Powerhouse Summit 2026</a></h3>
+            <p class="meta">香港政府新聞公報 · 2026年10月5日</p>
+            <p class="why"><b>點解有用</b>創新科技及工業局常任秘書長 Kevin Choi 向逾200名來自30多個國家和地區的參加者講話，主題是人工智能令初級職位受衝擊。他引用一項研究話，受訪香港人近七成已能比較和選用人工智能工具，約兩成會用人工智能代理處理日常工作。政府計劃在2028年初前提供逾200項培訓。風險管治策略涵蓋七個範疇，包括道德管治同人工智能代理安全，並會新設人工智能專員。可以討論識用工具之外，風險由邊個負責。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">可持續發展</span>
+            </div>
+            <h3><a href="https://www.rte.ie/news/world/2026/1005/1593982-pacific-nations-climate/" target="_blank" rel="noopener noreferrer">Pacific nations press climate action at pre-COP summit</a></h3>
+            <p class="meta">RTÉ · 2026年10月5日</p>
+            <p class="why"><b>點解有用</b>聯合國氣候預備會已在斐濟楠迪開始，行程包括圖瓦盧，為11月在土耳其舉行的COP31做準備。斐濟氣候部長在開幕提出三點：守住升溫1.5度、讓資金到達有需要的社區、正視海洋。報道又引聯合國氣候變化執行秘書的會前聲明，指極端高溫正增加早產、死產等風險。可以用嚟講可持續發展不單是減排目標，也關乎融資和健康。</p>
+          </article>
+        </div>
+      </section>
+    </section>
+
     <section id="day-1004" class="day">
       <h2 class="daytitle">10月4日</h2>
       <section class="grade">
-      <header class="ghead">
-        <p class="gnum" style="color:#d61f45">中四</p>
-        <div><h2>主題一：「一國兩制」下的香港</h2></div>
-      </header>
-      <div class="cards">
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#d61f45;color:#fff">中四</span>
-        <span class="chip unit">「一國兩制」的內涵和實踐</span>
-      </div>
-      <h3><a href="https://www.news.gov.hk/chi/2026/10/20261004/20261004_112531_775.html" target="_blank" rel="noopener noreferrer">把握大勢 深化國際聯繫</a></h3>
-      <p class="meta">香港政府新聞網（財政司司長網誌） · 2026年10月4日</p>
-      <p class="why" style="background:#ffe8ee"><b>點解有用</b> 財政司司長話香港憑「一國兩制」、國際化同透明度，成為貿易同投資夥伴的選擇，又提到本月亞太經合組織財長會首次喺香港舉行。答「一國兩制」點樣實踐，可以用嚟講香港保持國際聯繫、發揮獨特優勢。</p>
-    </article>
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#d61f45;color:#fff">中四</span>
-        <span class="chip unit">國家情況與國民身份認同</span>
-      </div>
-      <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400326.htm" target="_blank" rel="noopener noreferrer">行政長官祝賀中國香港運動員在第二十屆亞洲運動會取得佳績</a></h3>
-      <p class="meta">香港政府新聞公報 · 2026年10月4日</p>
-      <p class="why" style="background:#ffe8ee"><b>點解有用</b> 特首話「中國香港」代表團奪得11金19銀24銅共54面獎牌，突破歷屆紀錄，「為國家、為香港爭光」。可以用嚟講香港運動員以「中國香港」名義出賽，點樣同時連結國民身份同香港身份。</p>
-    </article>
-      </div>
-    </section><section class="grade">
-      <header class="ghead">
-        <p class="gnum" style="color:#e06a00">中五</p>
-        <div><h2>主題二：改革開放以來的國家</h2></div>
-      </header>
-      <div class="cards">
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#e06a00;color:#fff">中五</span>
-        <span class="chip unit">人民生活的轉變與綜合國力</span>
-      </div>
-      <h3><a href="https://www.news.cn/fortune/20261004/cb1325cdfe4445dc86aac385e23b27fc/c.html" target="_blank" rel="noopener noreferrer">國慶假期過半消費市場平穩有序</a></h3>
-      <p class="meta">新華網 · 2026年10月4日</p>
-      <p class="why" style="background:#fff1df"><b>點解有用</b> 商務部數據指假期頭三日，78個重點步行街（商圈）客流量同營業額按年分別升3.4%同5.3%，以舊換新帶動銷售196.3億元。可以用嚟講人民生活同消費模式的轉變，但要記住只係假期幾日的數據。</p>
-    </article>
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#e06a00;color:#fff">中五</span>
-        <span class="chip unit">國家的發展與香港融入國家發展大局</span>
-      </div>
-      <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400252.htm" target="_blank" rel="noopener noreferrer">保安局舉辦皇崗口岸社區體驗日</a></h3>
-      <p class="meta">香港政府新聞公報 · 2026年10月4日</p>
-      <p class="why" style="background:#fff1df"><b>點解有用</b> 重建後的皇崗口岸開通在即，逾1 500名市民率先體驗「合作查驗、一次放行」新通關模式。可以用嚟講兩地基建同通關對接，係香港融入國家發展大局的具體例子。</p>
-    </article>
-      </div>
-    </section><section class="grade">
-      <header class="ghead">
-        <p class="gnum" style="color:#0b6e91">中六</p>
-        <div><h2>主題三：互聯相依的當代世界</h2></div>
-      </header>
-      <div class="cards">
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
-        <span class="chip unit">經濟全球化</span>
-      </div>
-      <h3><a href="https://www.thestar.com.my/aseanplus/aseanplus-news/2026/10/04/beijing-criticises-push-for-eu-to-develop-section-301-style-trade-tool-to-counter-china" target="_blank" rel="noopener noreferrer">Beijing criticises push for EU to develop Section 301-style trade tool to counter China</a></h3>
-      <p class="meta">The Star（轉載南華早報） · 2026年10月4日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 報道指法德正推動歐盟設立類似美國「301條款」的貿易工具，中方批評並表明會維護中國產業權益，而中歐本月會開第二輪貿易談判。可以同中美降稅新聞對讀，睇全球化之下合作同保護主義點樣並存。</p>
-    </article>
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
-        <span class="chip unit">科技發展與資訊素養</span>
-      </div>
-      <h3><a href="https://www.cbsnews.com/news/ai-super-intelligence-force-trump-jay-clayton/" target="_blank" rel="noopener noreferrer">Trump announces formation of AI "Super Intelligence Force"</a></h3>
-      <p class="meta">CBS News · 2026年10月4日（美國時間）</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 特朗普宣布成立人工智能專責小組，而大型科技公司早前簽的安全標準屬自願性質。可以討論人工智能應該靠企業自律定係法律規管，資訊素養都包括睇清楚邊個要負責。</p>
-    </article>
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
-        <span class="chip unit">可持續發展</span>
-      </div>
-      <h3><a href="https://www.sinchew.com.my/news/20261004/international/7908948" target="_blank" rel="noopener noreferrer">世界大國齊聚太平洋　共商氣候之戰</a></h3>
-      <p class="meta">星洲日報（法新社） · 2026年10月4日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 報道指多國將在斐濟同圖瓦盧開氣候預備會，為11月COP31鋪路，島國領袖指海平面上升已是眼前問題。可以同上一則宣言對讀，睇唔同持份者點樣推動適應同融資。</p>
-    </article>
-      </div>
+        <header class="ghead">
+          <p class="gnum">中四</p>
+          <h2>主題一：「一國兩制」下的香港</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中四</span>
+              <span class="chip unit">「一國兩制」的內涵和實踐</span>
+            </div>
+            <h3><a href="https://www.news.gov.hk/chi/2026/10/20261004/20261004_112531_775.html" target="_blank" rel="noopener noreferrer">把握大勢 深化國際聯繫</a></h3>
+            <p class="meta">香港政府新聞網（財政司司長網誌） · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>財政司司長話香港憑「一國兩制」、國際化同透明度，成為貿易同投資夥伴的選擇，又提到本月亞太經合組織財長會首次喺香港舉行。答「一國兩制」點樣實踐，可以用嚟講香港保持國際聯繫、發揮獨特優勢。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中四</span>
+              <span class="chip unit">國家情況與國民身份認同</span>
+            </div>
+            <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400326.htm" target="_blank" rel="noopener noreferrer">行政長官祝賀中國香港運動員在第二十屆亞洲運動會取得佳績</a></h3>
+            <p class="meta">香港政府新聞公報 · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>特首話「中國香港」代表團奪得11金19銀24銅共54面獎牌，突破歷屆紀錄，「為國家、為香港爭光」。可以用嚟講香港運動員以「中國香港」名義出賽，點樣同時連結國民身份同香港身份。</p>
+          </article>
+        </div>
+      </section>
+      <section class="grade">
+        <header class="ghead">
+          <p class="gnum">中五</p>
+          <h2>主題二：改革開放以來的國家</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中五</span>
+              <span class="chip unit">人民生活的轉變與綜合國力</span>
+            </div>
+            <h3><a href="https://www.news.cn/fortune/20261004/cb1325cdfe4445dc86aac385e23b27fc/c.html" target="_blank" rel="noopener noreferrer">國慶假期過半消費市場平穩有序</a></h3>
+            <p class="meta">新華網 · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>商務部數據指假期頭三日，78個重點步行街（商圈）客流量同營業額按年分別升3.4%同5.3%，以舊換新帶動銷售額196.3億元，惠及348.3萬人次。可以用嚟講人民生活同消費模式的轉變，但要記住只係假期幾日的數據。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中五</span>
+              <span class="chip unit">人民生活的轉變與綜合國力</span>
+            </div>
+            <h3><a href="https://www.aljazeera.com/sports/2026/10/4/amid-teen-triumph-and-organisational-chaos-asian-games-close-in-japan" target="_blank" rel="noopener noreferrer">Amid teen triumph and organisational chaos, Asian Games close in Japan</a></h3>
+            <p class="meta">Al Jazeera（路透社） · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>亞運閉幕。報道指中國以169金、合共341面獎牌領先，是在境外舉行的亞運最佳成績；日本得83金。中國香港代表團團長向路透社表示，不少隊伍受住宿和交通問題影響。可以用嚟講體育成績是綜合國力的一面，同時要分清獎牌榜同賽事組織是兩件事。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中五</span>
+              <span class="chip unit">國家的發展與香港融入國家發展大局</span>
+            </div>
+            <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400252.htm" target="_blank" rel="noopener noreferrer">保安局舉辦皇崗口岸社區體驗日</a></h3>
+            <p class="meta">香港政府新聞公報 · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>重建後的皇崗口岸開通在即，逾1 500名市民率先體驗「合作查驗、一次放行」新通關模式。可以用嚟講兩地基建同通關對接，係香港融入國家發展大局的具體例子。</p>
+          </article>
+        </div>
+      </section>
+      <section class="grade">
+        <header class="ghead">
+          <p class="gnum">中六</p>
+          <h2>主題三：互聯相依的當代世界</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">經濟全球化</span>
+            </div>
+            <h3><a href="https://www.thestar.com.my/aseanplus/aseanplus-news/2026/10/04/beijing-criticises-push-for-eu-to-develop-section-301-style-trade-tool-to-counter-china" target="_blank" rel="noopener noreferrer">Beijing criticises push for EU to develop Section 301-style trade tool to counter China</a></h3>
+            <p class="meta">The Star（轉載南華早報） · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>報道指法德正推動歐盟設立類似美國「301條款」的貿易工具，中方批評並表明會維護中國產業權益，而中歐本月會開第二輪貿易談判。可以用嚟講經濟全球化之下，對話同保護主義可以同時出現。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">科技發展與資訊素養</span>
+            </div>
+            <h3><a href="https://www.cbsnews.com/news/ai-super-intelligence-force-trump-jay-clayton/" target="_blank" rel="noopener noreferrer">Trump announces formation of AI "Super Intelligence Force"</a></h3>
+            <p class="meta">CBS News · 2026年10月4日（美國時間）</p>
+            <p class="why"><b>點解有用</b>特朗普宣布成立人工智能專責小組，而大型科技公司早前簽的安全標準屬自願性質。可以討論人工智能應該靠企業自律定係法律規管，資訊素養都包括睇清楚邊個要負責。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">科技發展與資訊素養</span>
+            </div>
+            <h3><a href="https://www.news.gov.hk/eng/2026/10/20261002/20261002_173044_997.html" target="_blank" rel="noopener noreferrer">Lab advances Chinese medicine tests</a></h3>
+            <p class="meta">香港政府新聞網 · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>政府中藥檢測中心自2017年成立以來完成22個專題研究，包括把鹿茸真偽檢測由三日縮短到一日以內的快速DNA方法，又試用「電子舌」把中藥味道數據化。可以講科技點樣用喺中藥檢測；數據化味道仍是試驗，唔好當成已經取代經驗判斷。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">可持續發展</span>
+            </div>
+            <h3><a href="https://www.sinchew.com.my/news/20261004/international/7908948" target="_blank" rel="noopener noreferrer">世界大國齊聚太平洋　共商氣候之戰</a></h3>
+            <p class="meta">星洲日報（法新社） · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>報道指多國代表10月5日至8日會在斐濟楠迪開氣候預備會，並到圖瓦盧了解海平面上升，為11月COP31鋪路。太平洋國家推動守住升溫1.5度、增加氣候融資，以及關注海洋。圖瓦盧總理話海平面上升已是眼前問題。可以用嚟講風險並不平均，適應要靠國際談判。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">可持續發展</span>
+            </div>
+            <h3><a href="https://news.rthk.hk/rthk/ch/component/k2/1872655-20261004.htm" target="_blank" rel="noopener noreferrer">環保署宣布新界東北堆填區擴建部分今日全面啓用</a></h3>
+            <p class="meta">香港電台 · 2026年10月4日</p>
+            <p class="why"><b>點解有用</b>新界東北堆填區擴建部分全面啓用，設計容量約1 900萬立方米，原有堆填區今年稍後停止運作並修復。可以說明可持續發展唔只係遠方的氣候峰會，也包括本地廢物管理和堆填區的環境配套。</p>
+          </article>
+        </div>
+      </section>
     </section>
-    </section>
-<section id="day-1003" class="day">
+
+    <section id="day-1003" class="day">
       <h2 class="daytitle">10月3日</h2>
       <section class="grade">
-      <header class="ghead">
-        <p class="gnum" style="color:#e06a00">中五</p>
-        <div><h2>主題二：改革開放以來的國家</h2></div>
-      </header>
-      <div class="cards">
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#e06a00;color:#fff">中五</span>
-        <span class="chip unit">參與國際事務</span>
-      </div>
-      <h3><a href="https://www.chinanews.com.cn/cj/2026/10-03/10707460.shtml" target="_blank" rel="noopener noreferrer">「21世紀海上絲綢之路」航線已覆蓋全球100多個國家和地區</a></h3>
-      <p class="meta">中新網（來源：央視新聞客戶端） · 2026年10月3日</p>
-      <p class="why" style="background:#fff1df"><b>點解有用</b> 報道用新航線講海上絲綢之路仍然推動國家同其他地區的經貿往來。可以對應「一帶一路」，再想想香港航運同專業服務可以做咩角色。</p>
-    </article>
-      </div>
-    </section><section class="grade">
-      <header class="ghead">
-        <p class="gnum" style="color:#0b6e91">中六</p>
-        <div><h2>主題三：互聯相依的當代世界</h2></div>
-      </header>
-      <div class="cards">
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
-        <span class="chip unit">公共衞生與人類健康</span>
-      </div>
-      <h3><a href="https://www.newindianexpress.com/world/2026/Oct/03/an-ebola-treatment-center-was-burned-down-as-the-death-toll-in-congo-passes-4000" target="_blank" rel="noopener noreferrer">An Ebola treatment center was burned down as the death toll in Congo passes 4,000</a></h3>
-      <p class="meta">The New Indian Express（美聯社） · 2026年10月3日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 剛果（金）伊波拉疫情自5月以來錄得8 300宗個案、4 018人死亡，有收容病人的營地被焚燒。可以說明戰亂同社區信任都會影響防疫，傳染病防控需要國際支援。</p>
-    </article>
-      </div>
-    </section>
-    </section>
-<section id="day-1002" class="day">
-      <h2 class="daytitle">10月2日</h2>
+        <header class="ghead">
+          <p class="gnum">中四</p>
+          <h2>主題一：「一國兩制」下的香港</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中四</span>
+              <span class="chip unit">香港社會的多元文化特徵</span>
+            </div>
+            <h3><a href="https://www.hkcd.com.hk/hkcdweb/content/2026/10/03/content_8778393.html" target="_blank" rel="noopener noreferrer">警社攜手守護多元家庭 促進不同文化聯繫</a></h3>
+            <p class="meta">香港商報 · 2026年10月3日</p>
+            <p class="why"><b>點解有用</b>屯門友愛邨伊斯蘭學校舉行「多元社區家庭守護計劃」匯演，警方、社署、民政處、學校同少數族裔服務單位一齊參加，現場有印度舞、尼泊爾舞等表演。計劃由元朗擴展到屯門同葵青。可以用嚟講香港社會的多元文化特徵，以及公共服務點樣面對語言同文化差異。</p>
+          </article>
+        </div>
+      </section>
       <section class="grade">
-      <header class="ghead">
-        <p class="gnum" style="color:#0b6e91">中六</p>
-        <div><h2>主題三：互聯相依的當代世界</h2></div>
-      </header>
-      <div class="cards">
-<article class="card">
-      <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
-        <span class="chip unit">可持續發展</span>
-      </div>
-      <h3><a href="https://www.nationalobserver.com/2026/10/02/news/climate-change-un-antonio-guterres" target="_blank" rel="noopener noreferrer">Climate crisis is no longer a ‘distant warning,’ UN leader says</a></h3>
-      <p class="meta">Canada's National Observer（轉載 Inside Climate News） · 2026年10月2日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 報道講聯合國大會通過海平面上升宣言，秘書長指氣候危機已是日常現實。可以說明可持續發展要靠國際合作，島國同低窪地區的風險並不平均。</p>
-    </article>
-      </div>
-    </section>
+        <header class="ghead">
+          <p class="gnum">中五</p>
+          <h2>主題二：改革開放以來的國家</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中五</span>
+              <span class="chip unit">參與國際事務</span>
+            </div>
+            <h3><a href="https://www.chinanews.com.cn/cj/2026/10-03/10707460.shtml" target="_blank" rel="noopener noreferrer">「21世紀海上絲綢之路」航線已覆蓋全球100多個國家和地區</a></h3>
+            <p class="meta">中新網（來源：央視新聞客戶端） · 2026年10月3日</p>
+            <p class="why"><b>點解有用</b>當日是共建「21世紀海上絲綢之路」提出13周年。報道話國際集裝箱班輪航線已覆蓋全球100多個國家和地區，福建新開直達南美東海岸的周班航線。今年1至8月，11個國際樞紐海港外貿吞吐量接近22億噸。可以對應「一帶一路」，再想想香港航運同專業服務可以做咩角色。</p>
+          </article>
+        </div>
+      </section>
+      <section class="grade">
+        <header class="ghead">
+          <p class="gnum">中六</p>
+          <h2>主題三：互聯相依的當代世界</h2>
+        </header>
+        <div class="cards">
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">公共衞生與人類健康</span>
+            </div>
+            <h3><a href="https://www.newindianexpress.com/world/2026/Oct/03/an-ebola-treatment-center-was-burned-down-as-the-death-toll-in-congo-passes-4000" target="_blank" rel="noopener noreferrer">An Ebola treatment center was burned down as the death toll in Congo passes 4,000</a></h3>
+            <p class="meta">The New Indian Express（美聯社） · 2026年10月3日</p>
+            <p class="why"><b>點解有用</b>剛果（金）伊波拉疫情自5月15日宣布以來錄得8 300宗個案、4 018人死亡，收容病人的營地被焚毀，約1.9萬人逃離。可以說明戰亂同社區信任都會影響防疫，傳染病防控需要國際支援。</p>
+          </article>
+          <article class="card">
+            <div class="tags">
+              <span class="chip">中六</span>
+              <span class="chip unit">公共衞生與人類健康</span>
+            </div>
+            <h3><a href="https://www.info.gov.hk/gia/general/202610/03/P2026100300657.htm" target="_blank" rel="noopener noreferrer">CHP records case of severe paediatric influenza infection</a></h3>
+            <p class="meta">香港政府新聞公報 · 2026年10月3日</p>
+            <p class="why"><b>點解有用</b>衞生防護中心錄得一宗嚴重兒童流感：9歲女童感染乙型流感，併發敗血性休克同嚴重肺炎，仍在兒童深切治療部，情況危殆。6月底至今累計21宗嚴重兒童流感，其中1人死亡。可以講公共衞生靠監測、疫苗同學校預防，風險亦會隨開學而上升。</p>
+          </article>
+        </div>
+      </section>
     </section>
   </main>
   <footer>
