@@ -3,64 +3,253 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#B80000">
 <title>公民科·每日例子｜2026年10月5日</title>
 <style>
-  :root { --ink:#1a120e; --muted:#5c5348; --paper:#fff4ea; --card:#fffdfb; }
-  * { box-sizing:border-box; }
-  html { scroll-behavior:smooth; }
+  :root {
+    --ink: #141414;
+    --muted: #4d4d4d;
+    --line: #e2e2e2;
+    --red: #B80000;
+    --paper: #fff;
+    --pad: 18px;
+    --s4: #7A2032;
+    --s5: #6B4714;
+    --s6: #163E5C;
+    --nav-offset: 64px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--nav-offset); }
   body {
-    margin:0; color:var(--ink); background:
-      linear-gradient(90deg,#d61f45 0 33%,#e06a00 33% 66%,#0b6e91 66% 100%) top/100% 6px no-repeat,
-      var(--paper);
-    font-family:"PingFang HK","PingFang TC","Noto Sans CJK TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif;
-    font-size:17px; line-height:1.5;
+    margin: 0;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: "PingFang HK", "PingFang TC", "Noto Sans CJK HK", "Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
   }
-  a { color:#0b3d66; }
-  a:hover { color:#071e33; }
-  a:focus-visible { outline:3px solid #0b6e91; outline-offset:2px; }
-  .skip { position:absolute; left:8px; top:-48px; background:#fff; padding:6px 10px; font-size:17px; }
-  .skip:focus { top:8px; }
-  .wrap { max-width:1080px; margin:0 auto; padding:12px 14px 36px; }
-  .mast { padding:8px 0 0; }
-  .eyebrow { margin:0 0 2px; font-size:14px; letter-spacing:.08em; font-weight:700; color:var(--muted); }
-  h1 { margin:0; font-size:clamp(32px,5vw,44px); line-height:1.05; letter-spacing:-.03em; font-weight:800; }
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--red);
+    z-index: 40;
+  }
+  a { color: var(--red); text-underline-offset: 2px; }
+  a:hover { color: #8E0000; }
+  a:focus-visible { outline: 3px solid #141414; outline-offset: 3px; }
+  .skip {
+    position: absolute;
+    left: 8px;
+    top: -60px;
+    background: #fff;
+    color: #141414;
+    padding: 8px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    z-index: 50;
+    text-decoration: none;
+    border: 2px solid #141414;
+  }
+  .skip:focus { position: fixed; top: 10px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 var(--pad) 48px; }
+  .mast { padding: 22px 0 16px; border-bottom: 1px solid #141414; }
+  .eyebrow {
+    margin: 0 0 8px;
+    font-size: 13px;
+    letter-spacing: .06em;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .mastrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 24px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(32px, 5.2vw, 46px);
+    line-height: 1.08;
+    letter-spacing: -.02em;
+    font-weight: 800;
+  }
   .date {
-    display:inline-block; margin:8px 0 0; color:#1a120e;
-    font-weight:700; font-size:15px;
+    margin: 0;
+    color: #222;
+    font-weight: 700;
+    font-size: 15px;
   }
-  .purpose { margin:8px 0 0; font-size:17px; max-width:40em; }
+  .date::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    background: var(--red);
+    vertical-align: 1px;
+  }
   nav {
-    position:sticky; top:0; z-index:3; display:flex; gap:6px; flex-wrap:wrap;
-    padding:8px 0; background:#fff4ea;
+    position: sticky;
+    top: 4px;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 calc(var(--pad) * -1);
+    padding: 0 var(--pad);
+    background: #fff;
+    border-bottom: 1px solid var(--line);
   }
   nav a {
-    text-decoration:none; color:#fff; font-weight:800; border-radius:999px;
-    padding:6px 12px; font-size:17px;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 16px;
+    padding: 12px 14px 10px;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
   }
-  nav a.s4 { background:#d61f45; }
-  nav a.s5 { background:#e06a00; }
-  nav a.s6 { background:#0b6e91; }
-  .day { scroll-margin-top:56px; margin:0 0 8px; }
-  .daytitle { margin:10px 0 4px; font-size:clamp(26px,4vw,34px); line-height:1.1; font-weight:800; }
-  .grade { scroll-margin-top:56px; margin:0 0 18px; }
-  .ghead { display:flex; gap:10px; align-items:baseline; margin:4px 0 8px; }
-  .gnum { margin:0; font-size:clamp(28px,4vw,36px); line-height:1; font-weight:800; letter-spacing:-.03em; }
-  .ghead h2 { margin:0; font-size:clamp(20px,2.4vw,24px); line-height:1.25; }
-  .gnote { margin:2px 0 0; color:var(--muted); font-size:17px; }
-  .cards { display:grid; gap:10px; align-items:start; }
-  @media (min-width:860px) { .cards { grid-template-columns:1fr 1fr; } }
-  .card { background:var(--card); border-radius:12px; padding:10px 12px; }
-  .tags { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px; }
-  .chip { font-size:14px; font-weight:800; border-radius:999px; padding:2px 8px; line-height:1.35; }
-  .unit { color:#1a120e; font-weight:700; }
-  .card h3 { margin:0 0 4px; font-size:clamp(20px,2.2vw,23px); line-height:1.3; font-weight:800; letter-spacing:-.01em; }
-  .meta { margin:0 0 6px; color:var(--muted); font-size:14px; font-weight:650; }
-  .why { margin:0; border-radius:8px; padding:8px 10px; font-size:17px; }
-  .why b { margin-right:4px; }
-        footer { margin-top:8px; color:var(--muted); font-size:15px; }
-  footer p { margin:0 0 6px; }
-  @media (max-width:640px) { .wrap { padding:10px 12px 28px; } }
-  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  nav a:hover { color: var(--red); }
+  nav a[aria-current="date"] {
+    color: var(--red);
+    border-bottom-color: var(--red);
+  }
+  .day { scroll-margin-top: var(--nav-offset); }
+  h2.daytitle {
+    margin: 26px 0 4px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #141414;
+    font-size: clamp(26px, 3.6vw, 34px);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -.015em;
+  }
+  .day + .day {
+    margin-top: 36px;
+    padding-top: 4px;
+    border-top: 1px solid #d4d4d4;
+  }
+  .day + .day h2.daytitle { margin-top: 16px; }
+  .grade { margin: 0 0 6px; }
+  .s4 { --g: var(--s4); }
+  .s5 { --g: var(--s5); }
+  .s6 { --g: var(--s6); }
+  .ghead {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: baseline;
+    margin: 18px 0 12px;
+  }
+  .gnum {
+    margin: 0;
+    padding-left: 8px;
+    border-left: 3px solid var(--g);
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: .08em;
+    color: var(--g);
+  }
+  .ghead h2 {
+    margin: 0;
+    font-size: clamp(18px, 2.2vw, 22px);
+    line-height: 1.35;
+    font-weight: 700;
+  }
+  .cards {
+    display: grid;
+    gap: 12px;
+    align-items: stretch;
+  }
+  @media (min-width: 860px) {
+    .cards { grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+    .cards .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-left: 3px solid var(--g, #222);
+    padding: 14px 16px 16px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .chip { line-height: 1.35; }
+  .chip.grade {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    color: var(--g);
+    padding-bottom: 1px;
+    border-bottom: 2px solid var(--g);
+  }
+  .chip.unit {
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .card h3 {
+    margin: 0 0 6px;
+    font-size: clamp(20px, 2.05vw, 24px);
+    line-height: 1.3;
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+  .card h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .card h3 a:hover,
+  .card h3 a:focus-visible {
+    color: var(--red);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .why {
+    margin: 12px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid #ececec;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1c1c1c;
+  }
+  .why b { margin-right: 4px; color: #141414; }
+  #main:focus { outline: none; }
+  footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 2px solid #141414;
+    color: #3a3a3a;
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+  footer p { margin: 0 0 8px; }
+  footer a { font-weight: 700; }
+  @media (max-width: 640px) {
+    :root { --pad: 14px; }
+    .wrap { padding-bottom: 36px; }
+    .mast { padding: 16px 0 14px; }
+    nav a { padding: 11px 10px 9px; font-size: 15px; }
+    .card { padding: 13px 13px 14px; }
+    h2.daytitle { margin-top: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
@@ -68,155 +257,157 @@
 <div class="wrap">
   <header class="mast">
     <p class="eyebrow">香港中學文憑 · 公民與社會發展科</p>
-    <h1>公民科·每日例子</h1>
-    <p class="date">2026年10月5日（星期一）</p>
+    <div class="mastrow">
+      <h1>公民科·每日例子</h1>
+      <p class="date">2026年10月5日（星期一）</p>
+    </div>
   </header>
   <nav aria-label="日期">
-    <a href="#day-1004" style="background:#d61f45">10月4日</a>
-    <a href="#day-1003" style="background:#e06a00">10月3日</a>
-    <a href="#day-1002" style="background:#0b6e91">10月2日</a>
+    <a href="#day-1004" aria-current="date">10月4日</a>
+    <a href="#day-1003">10月3日</a>
+    <a href="#day-1002">10月2日</a>
   </nav>
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section id="day-1004" class="day">
       <h2 class="daytitle">10月4日</h2>
-      <section class="grade">
+      <section class="grade s4">
       <header class="ghead">
-        <p class="gnum" style="color:#d61f45">中四</p>
+        <p class="gnum">中四</p>
         <div><h2>主題一：「一國兩制」下的香港</h2></div>
       </header>
       <div class="cards">
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#d61f45;color:#fff">中四</span>
+        <span class="chip grade">中四</span>
         <span class="chip unit">「一國兩制」的內涵和實踐</span>
       </div>
       <h3><a href="https://www.news.gov.hk/chi/2026/10/20261004/20261004_112531_775.html" target="_blank" rel="noopener noreferrer">把握大勢 深化國際聯繫</a></h3>
       <p class="meta">香港政府新聞網（財政司司長網誌） · 2026年10月4日</p>
-      <p class="why" style="background:#ffe8ee"><b>點解有用</b> 財政司司長話香港憑「一國兩制」、國際化同透明度，成為貿易同投資夥伴的選擇，又提到本月亞太經合組織財長會首次喺香港舉行。答「一國兩制」點樣實踐，可以用嚟講香港保持國際聯繫、發揮獨特優勢。</p>
+      <p class="why"><b>點解有用</b> 財政司司長話香港憑「一國兩制」、國際化同透明度，成為貿易同投資夥伴的選擇，又提到本月亞太經合組織財長會首次喺香港舉行。答「一國兩制」點樣實踐，可以用嚟講香港保持國際聯繫、發揮獨特優勢。</p>
     </article>
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#d61f45;color:#fff">中四</span>
+        <span class="chip grade">中四</span>
         <span class="chip unit">國家情況與國民身份認同</span>
       </div>
       <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400326.htm" target="_blank" rel="noopener noreferrer">行政長官祝賀中國香港運動員在第二十屆亞洲運動會取得佳績</a></h3>
       <p class="meta">香港政府新聞公報 · 2026年10月4日</p>
-      <p class="why" style="background:#ffe8ee"><b>點解有用</b> 特首話「中國香港」代表團奪得11金19銀24銅共54面獎牌，突破歷屆紀錄，「為國家、為香港爭光」。可以用嚟講香港運動員以「中國香港」名義出賽，點樣同時連結國民身份同香港身份。</p>
+      <p class="why"><b>點解有用</b> 特首話「中國香港」代表團奪得11金19銀24銅共54面獎牌，突破歷屆紀錄，「為國家、為香港爭光」。可以用嚟講香港運動員以「中國香港」名義出賽，點樣同時連結國民身份同香港身份。</p>
     </article>
       </div>
-    </section><section class="grade">
+    </section><section class="grade s5">
       <header class="ghead">
-        <p class="gnum" style="color:#e06a00">中五</p>
+        <p class="gnum">中五</p>
         <div><h2>主題二：改革開放以來的國家</h2></div>
       </header>
       <div class="cards">
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#e06a00;color:#fff">中五</span>
+        <span class="chip grade">中五</span>
         <span class="chip unit">人民生活的轉變與綜合國力</span>
       </div>
       <h3><a href="https://www.news.cn/fortune/20261004/cb1325cdfe4445dc86aac385e23b27fc/c.html" target="_blank" rel="noopener noreferrer">國慶假期過半消費市場平穩有序</a></h3>
       <p class="meta">新華網 · 2026年10月4日</p>
-      <p class="why" style="background:#fff1df"><b>點解有用</b> 商務部數據指假期頭三日，78個重點步行街（商圈）客流量同營業額按年分別升3.4%同5.3%，以舊換新帶動銷售196.3億元。可以用嚟講人民生活同消費模式的轉變，但要記住只係假期幾日的數據。</p>
+      <p class="why"><b>點解有用</b> 商務部數據指假期頭三日，78個重點步行街（商圈）客流量同營業額按年分別升3.4%同5.3%，以舊換新帶動銷售196.3億元。可以用嚟講人民生活同消費模式的轉變，但要記住只係假期幾日的數據。</p>
     </article>
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#e06a00;color:#fff">中五</span>
+        <span class="chip grade">中五</span>
         <span class="chip unit">國家的發展與香港融入國家發展大局</span>
       </div>
       <h3><a href="https://www.info.gov.hk/gia/general/202610/04/P2026100400252.htm" target="_blank" rel="noopener noreferrer">保安局舉辦皇崗口岸社區體驗日</a></h3>
       <p class="meta">香港政府新聞公報 · 2026年10月4日</p>
-      <p class="why" style="background:#fff1df"><b>點解有用</b> 重建後的皇崗口岸開通在即，逾1 500名市民率先體驗「合作查驗、一次放行」新通關模式。可以用嚟講兩地基建同通關對接，係香港融入國家發展大局的具體例子。</p>
+      <p class="why"><b>點解有用</b> 重建後的皇崗口岸開通在即，逾1 500名市民率先體驗「合作查驗、一次放行」新通關模式。可以用嚟講兩地基建同通關對接，係香港融入國家發展大局的具體例子。</p>
     </article>
       </div>
-    </section><section class="grade">
+    </section><section class="grade s6">
       <header class="ghead">
-        <p class="gnum" style="color:#0b6e91">中六</p>
+        <p class="gnum">中六</p>
         <div><h2>主題三：互聯相依的當代世界</h2></div>
       </header>
       <div class="cards">
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
+        <span class="chip grade">中六</span>
         <span class="chip unit">經濟全球化</span>
       </div>
-      <h3><a href="https://www.thestar.com.my/aseanplus/aseanplus-news/2026/10/04/beijing-criticises-push-for-eu-to-develop-section-301-style-trade-tool-to-counter-china" target="_blank" rel="noopener noreferrer">Beijing criticises push for EU to develop Section 301-style trade tool to counter China</a></h3>
+      <h3 lang="en"><a href="https://www.thestar.com.my/aseanplus/aseanplus-news/2026/10/04/beijing-criticises-push-for-eu-to-develop-section-301-style-trade-tool-to-counter-china" target="_blank" rel="noopener noreferrer">Beijing criticises push for EU to develop Section 301-style trade tool to counter China</a></h3>
       <p class="meta">The Star（轉載南華早報） · 2026年10月4日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 報道指法德正推動歐盟設立類似美國「301條款」的貿易工具，中方批評並表明會維護中國產業權益，而中歐本月會開第二輪貿易談判。可以同中美降稅新聞對讀，睇全球化之下合作同保護主義點樣並存。</p>
+      <p class="why"><b>點解有用</b> 報道指法德正推動歐盟設立類似美國「301條款」的貿易工具，中方批評並表明會維護中國產業權益，而中歐本月會開第二輪貿易談判。可以同中美降稅新聞對讀，睇全球化之下合作同保護主義點樣並存。</p>
     </article>
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
+        <span class="chip grade">中六</span>
         <span class="chip unit">科技發展與資訊素養</span>
       </div>
-      <h3><a href="https://www.cbsnews.com/news/ai-super-intelligence-force-trump-jay-clayton/" target="_blank" rel="noopener noreferrer">Trump announces formation of AI "Super Intelligence Force"</a></h3>
+      <h3 lang="en"><a href="https://www.cbsnews.com/news/ai-super-intelligence-force-trump-jay-clayton/" target="_blank" rel="noopener noreferrer">Trump announces formation of AI "Super Intelligence Force"</a></h3>
       <p class="meta">CBS News · 2026年10月4日（美國時間）</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 特朗普宣布成立人工智能專責小組，而大型科技公司早前簽的安全標準屬自願性質。可以討論人工智能應該靠企業自律定係法律規管，資訊素養都包括睇清楚邊個要負責。</p>
+      <p class="why"><b>點解有用</b> 特朗普宣布成立人工智能專責小組，而大型科技公司早前簽的安全標準屬自願性質。可以討論人工智能應該靠企業自律定係法律規管，資訊素養都包括睇清楚邊個要負責。</p>
     </article>
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
+        <span class="chip grade">中六</span>
         <span class="chip unit">可持續發展</span>
       </div>
       <h3><a href="https://www.sinchew.com.my/news/20261004/international/7908948" target="_blank" rel="noopener noreferrer">世界大國齊聚太平洋　共商氣候之戰</a></h3>
       <p class="meta">星洲日報（法新社） · 2026年10月4日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 報道指多國將在斐濟同圖瓦盧開氣候預備會，為11月COP31鋪路，島國領袖指海平面上升已是眼前問題。可以同上一則宣言對讀，睇唔同持份者點樣推動適應同融資。</p>
+      <p class="why"><b>點解有用</b> 報道指多國將在斐濟同圖瓦盧開氣候預備會，為11月COP31鋪路，島國領袖指海平面上升已是眼前問題。可以同上一則宣言對讀，睇唔同持份者點樣推動適應同融資。</p>
     </article>
       </div>
     </section>
     </section>
 <section id="day-1003" class="day">
       <h2 class="daytitle">10月3日</h2>
-      <section class="grade">
+      <section class="grade s5">
       <header class="ghead">
-        <p class="gnum" style="color:#e06a00">中五</p>
+        <p class="gnum">中五</p>
         <div><h2>主題二：改革開放以來的國家</h2></div>
       </header>
       <div class="cards">
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#e06a00;color:#fff">中五</span>
+        <span class="chip grade">中五</span>
         <span class="chip unit">參與國際事務</span>
       </div>
       <h3><a href="https://www.chinanews.com.cn/cj/2026/10-03/10707460.shtml" target="_blank" rel="noopener noreferrer">「21世紀海上絲綢之路」航線已覆蓋全球100多個國家和地區</a></h3>
       <p class="meta">中新網（來源：央視新聞客戶端） · 2026年10月3日</p>
-      <p class="why" style="background:#fff1df"><b>點解有用</b> 報道用新航線講海上絲綢之路仍然推動國家同其他地區的經貿往來。可以對應「一帶一路」，再想想香港航運同專業服務可以做咩角色。</p>
+      <p class="why"><b>點解有用</b> 報道用新航線講海上絲綢之路仍然推動國家同其他地區的經貿往來。可以對應「一帶一路」，再想想香港航運同專業服務可以做咩角色。</p>
     </article>
       </div>
-    </section><section class="grade">
+    </section><section class="grade s6">
       <header class="ghead">
-        <p class="gnum" style="color:#0b6e91">中六</p>
+        <p class="gnum">中六</p>
         <div><h2>主題三：互聯相依的當代世界</h2></div>
       </header>
       <div class="cards">
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
+        <span class="chip grade">中六</span>
         <span class="chip unit">公共衞生與人類健康</span>
       </div>
-      <h3><a href="https://www.newindianexpress.com/world/2026/Oct/03/an-ebola-treatment-center-was-burned-down-as-the-death-toll-in-congo-passes-4000" target="_blank" rel="noopener noreferrer">An Ebola treatment center was burned down as the death toll in Congo passes 4,000</a></h3>
+      <h3 lang="en"><a href="https://www.newindianexpress.com/world/2026/Oct/03/an-ebola-treatment-center-was-burned-down-as-the-death-toll-in-congo-passes-4000" target="_blank" rel="noopener noreferrer">An Ebola treatment center was burned down as the death toll in Congo passes 4,000</a></h3>
       <p class="meta">The New Indian Express（美聯社） · 2026年10月3日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 剛果（金）伊波拉疫情自5月以來錄得8 300宗個案、4 018人死亡，有收容病人的營地被焚燒。可以說明戰亂同社區信任都會影響防疫，傳染病防控需要國際支援。</p>
+      <p class="why"><b>點解有用</b> 剛果（金）伊波拉疫情自5月以來錄得8 300宗個案、4 018人死亡，有收容病人的營地被焚燒。可以說明戰亂同社區信任都會影響防疫，傳染病防控需要國際支援。</p>
     </article>
       </div>
     </section>
     </section>
 <section id="day-1002" class="day">
       <h2 class="daytitle">10月2日</h2>
-      <section class="grade">
+      <section class="grade s6">
       <header class="ghead">
-        <p class="gnum" style="color:#0b6e91">中六</p>
+        <p class="gnum">中六</p>
         <div><h2>主題三：互聯相依的當代世界</h2></div>
       </header>
       <div class="cards">
 <article class="card">
       <div class="tags">
-        <span class="chip grade" style="background:#0b6e91;color:#fff">中六</span>
+        <span class="chip grade">中六</span>
         <span class="chip unit">可持續發展</span>
       </div>
-      <h3><a href="https://www.nationalobserver.com/2026/10/02/news/climate-change-un-antonio-guterres" target="_blank" rel="noopener noreferrer">Climate crisis is no longer a ‘distant warning,’ UN leader says</a></h3>
+      <h3 lang="en"><a href="https://www.nationalobserver.com/2026/10/02/news/climate-change-un-antonio-guterres" target="_blank" rel="noopener noreferrer">Climate crisis is no longer a ‘distant warning,’ UN leader says</a></h3>
       <p class="meta">Canada's National Observer（轉載 Inside Climate News） · 2026年10月2日</p>
-      <p class="why" style="background:#e7f6fb"><b>點解有用</b> 報道講聯合國大會通過海平面上升宣言，秘書長指氣候危機已是日常現實。可以說明可持續發展要靠國際合作，島國同低窪地區的風險並不平均。</p>
+      <p class="why"><b>點解有用</b> 報道講聯合國大會通過海平面上升宣言，秘書長指氣候危機已是日常現實。可以說明可持續發展要靠國際合作，島國同低窪地區的風險並不平均。</p>
     </article>
       </div>
     </section>
@@ -228,5 +419,39 @@
     <p>呢頁係溫習輔助，唔係教育局或考評局官方網站。來源是上面連結的新聞機構。</p>
   </footer>
 </div>
+
+<script>
+(function () {
+  var nav = document.querySelector('nav[aria-label="日期"]');
+  if (!nav) return;
+  var links = Array.prototype.slice.call(nav.querySelectorAll('a[href^="#"]'));
+  var sections = links.map(function (a) {
+    return document.getElementById(a.getAttribute('href').slice(1));
+  }).filter(Boolean);
+  if (!sections.length) return;
+  function setCurrent(id) {
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'date');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  function update() {
+    var id = sections[0].id;
+    var line = 72;
+    sections.forEach(function (s) {
+      if (s.getBoundingClientRect().top <= line) id = s.id;
+    });
+    setCurrent(id);
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { update(); ticking = false; });
+  }, { passive: true });
+  window.addEventListener('hashchange', update);
+  update();
+})();
+</script>
 </body>
 </html>
