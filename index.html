@@ -232,6 +232,8 @@
   footer p { margin: 0 0 6px; }
   footer a { color: var(--ink); text-underline-offset: 2px; }
   footer a:hover { color: var(--accent); }
+  .views { margin-top: 8px; font-size: 13px; font-weight: 600; }
+  .views span { color: var(--ink); font-variant-numeric: tabular-nums; }
   @media (max-width: 640px) {
     .wrap { padding: 8px 14px 36px; }
     nav { margin: 0 -14px; padding: 0 8px; }
@@ -677,7 +679,32 @@
     <p>英文題保留原文；簡體來源的題按香港用字寫成繁體。數字以原文為準。</p>
     <p>課題名稱核對自教育局《<a href="https://www.edb.gov.hk/attachment/tc/curriculum-development/renewal/CS/CS_CAG_S4-6_Chi_2021.pdf">公民與社會發展科課程及評估指引（中四至中六）</a>》（2021）。</p>
     <p>呢頁係溫習輔助，唔係教育局或考評局官方網站。來源是上面連結的新聞機構。</p>
+    <p id="view-count-row" class="views" hidden>瀏覽人次 <span id="view-count"></span></p>
   </footer>
 </div>
+<script>
+(function () {
+  var host = (location.hostname || "").toLowerCase();
+  var path = location.pathname || "";
+  if (host !== "mrbigbigwong.github.io" || path.indexOf("/csd-daily") !== 0) return;
+  var row = document.getElementById("view-count-row");
+  var el = document.getElementById("view-count");
+  if (!row || !el || !window.fetch) return;
+  fetch("https://abacus.jasoncameron.dev/hit/mrbigbigwong-csd-daily/visits", {
+    method: "GET",
+    cache: "no-store",
+    credentials: "omit",
+    referrerPolicy: "no-referrer"
+  }).then(function (res) {
+    if (!res.ok) throw new Error("counter");
+    return res.json();
+  }).then(function (data) {
+    var n = Number(data && data.value);
+    if (!isFinite(n) || n < 0) throw new Error("counter");
+    el.textContent = Math.floor(n).toLocaleString("zh-Hant-HK");
+    row.hidden = false;
+  }).catch(function () {});
+})();
+</script>
 </body>
 </html>
