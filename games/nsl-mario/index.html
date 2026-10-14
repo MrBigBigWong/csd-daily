@@ -29,7 +29,7 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
 #hud .hearts{color:#ff5252;letter-spacing:2px;font-size:clamp(16px,3.5vw,20px)}
 #hud .stars{color:#ffd700}
 #hud .level{color:#81d4fa}
-#tip{position:absolute;top:18%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.95);color:#1a1a3e;padding:12px 20px;border-radius:14px;font-size:clamp(14px,3vw,18px);font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.35);border:3px solid #ffd700;z-index:8;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s}
+#tip{position:absolute;top:18%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.95);color:#1a1a3e;padding:10px 16px;border-radius:14px;font-size:clamp(14px,2.8vw,17px);font-weight:700;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.35);border:3px solid #ffd700;z-index:8;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s}
 #tip.show{opacity:1}
 #controls{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:6;pointer-events:none}
 #controls.hidden{display:none}
@@ -42,10 +42,10 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
 #topBtns button{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
 .mascot-row{display:flex;gap:12px;justify-content:center;margin:12px 0;flex-wrap:wrap}
 .mascot-row canvas{width:88px;height:94px;border-radius:12px}
-#levelBanner{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);z-index:9;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s}
+#levelBanner{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);z-index:9;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;width:min(92%,640px)}
 #levelBanner.show{opacity:1}
 #levelBanner h2{font-size:clamp(24px,5vw,40px);color:#ffd700;text-shadow:0 3px 10px rgba(0,0,0,.7)}
-#levelBanner p{font-size:clamp(14px,3vw,18px);color:#fff;margin-top:6px;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+#levelBanner p{font-size:clamp(14px,3vw,18px);color:#fff;margin-top:6px;line-height:1.45;text-shadow:0 2px 6px rgba(0,0,0,.6)}
 @media(max-width:600px){
   .pad-btn{width:58px;height:58px;font-size:24px}
   .pad-btn.jump{width:70px;height:70px;font-size:15px}
@@ -241,20 +241,6 @@ const SFX={
   win:()=>{[523,659,784,1046,784,1046,1318].forEach((f,i)=>setTimeout(()=>beep(f,.2,'sine',.09),i*130))}
 };
 
-// ---------- Tips ----------
-const TIPS=[
-  "唔好亂 share 密碼同個人資料！🔒",
-  "唔好隨便開陌生人嘅連結或檔案 📎",
-  "見到謠言唔好亂傳，先查證先講 🔍",
-  "守法就係保護自己同家人 💛",
-  "上網要小心，保護自己嘅私隱 🛡",
-  "唔好隨便將學校或家庭地址公開 🏠",
-  "有懷疑就問爸媽或老師！🙋",
-  "國家安全人人有責，由小事做起 ✨",
-  "唔好下載不明嚟源嘅 App 📱",
-  "保護香港，由保護資訊開始 🇭🇰"
-];
-
 // ---------- Input ----------
 const keys={left:false,right:false,jump:false,jumpPressed:false};
 const km={'ArrowLeft':'left','ArrowRight':'right','KeyA':'left','KeyD':'right','Space':'jump','ArrowUp':'jump','KeyW':'jump','KeyZ':'jump'};
@@ -291,7 +277,8 @@ function buildLevel(def){
   const rows=def.map.split('\n').filter(r=>r.length);
   const h=rows.length, w=Math.max(...rows.map(r=>r.length));
   const solids=[], platforms=[], coins=[], stars=[], enemies=[], bounces=[];
-  let flag=null;
+  const levelTips=def.tips||[];
+  let starN=0, flag=null;
   let start={x:2*TILE,y:(h-3)*TILE};
   for(let y=0;y<h;y++){
     for(let x=0;x<w;x++){
@@ -303,7 +290,7 @@ function buildLevel(def){
       else if(ch==='P') solids.push({x:px,y:py,w:TILE,h:TILE,type:'pipe'});
       else if(ch==='^'){ platforms.push({x:px,y:py,w:TILE,h:TILE,type:'plat'}); bounces.push({x:px+4,y:py+18,w:TILE-8,h:22}); }
       else if(ch==='C') coins.push({x:px+10,y:py+10,w:20,h:20,got:false});
-      else if(ch==='*') stars.push({x:px+6,y:py+6,w:28,h:28,got:false,tip:TIPS[(x+y)%TIPS.length]});
+      else if(ch==='*'){ stars.push({x:px+6,y:py+6,w:28,h:28,got:false,tip:levelTips.length?levelTips[starN%levelTips.length]:''}); starN++; }
       else if(ch==='E') enemies.push({x:px+2,y:py+4,w:36,h:36,vx:-0.7,type:'spider',alive:true,ground:true});
       else if(ch==='A') enemies.push({x:px+2,y:py+2,w:36,h:32,vx:0.9,vy:0,type:'bat',alive:true,ground:false,baseY:py});
       else if(ch==='R') enemies.push({x:px+0,y:py+2,w:40,h:34,vx:-0.55,type:'rumor',alive:true,ground:false,baseY:py});
@@ -315,7 +302,14 @@ function buildLevel(def){
 }
 
 const LEVEL_DEFS=[
-{name:'校園走廊', theme:'corridor', tip:'用平台梯級一步步跳上去執金幣！',
+{name:'校園走廊', theme:'corridor', tip:'沿梯級跳上去執金幣，順手拾星星學國安！',
+tips:[
+  "國家安全即係國家同香港平安穩定，我哋先可以安心上學。🏠",
+  "總體國家安全觀提醒我哋：政治、經濟、社會同網絡等都要保護。🌱",
+  "國家安全人人有責，守規則、愛惜校園都係小朋友做得到。✨",
+  "國家安穩，香港先繁榮安定，大家先有平安嘅校園生活。💛",
+  "有唔明白嘅國安問題，問老師一齊學，就識得由小事做起。🙋"
+],
 map:`
 ............................................................................................................................................
 ..................CCC..........................*..........................CCC.........................CCC...................................
@@ -330,7 +324,15 @@ map:`
 ############################################################################################################################################
 ############################################################################################################################################
 `},
-{name:'電腦室', theme:'computer', tip:'踩綠色彈跳墊，再沿梯級跳上高台！',
+{name:'電腦室', theme:'computer', tip:'踩綠色彈跳墊上高台，星星教資訊安全！',
+tips:[
+  "網絡安全係國家安全嘅一部分，上網都要對自己講嘅嘢負責。💻",
+  "唔好亂傳未查證嘅消息，不實資訊會令人驚慌，亦危害社會。🔍",
+  "可疑連結同附件唔好亂開，以免中毒同學校資料外洩。📎",
+  "密碼、住址同學校資料要保密，唔好隨便放上社交平台。🔒",
+  "用社交平台要慎言：唔好欺凌同學，亦唔好轉發謠言。📱",
+  "保護個人同學校嘅資料，就係幫香港守住資訊安全。🛡"
+],
 map:`
 ............................................................................................................................................
 ..................CCC..........................*..........................CCC.........................CCC...................................
@@ -345,7 +347,15 @@ map:`
 ############################################################################################################################################
 ############################################################################################################################################
 `},
-{name:'操場', theme:'playground', tip:'平台梯級＋彈跳墊，高空金幣都執得到！',
+{name:'操場', theme:'playground', tip:'平台同彈跳墊執金幣，星星講社會和諧！',
+tips:[
+  "社會安全靠大家守法守規，校園同社區先會和諧安定。🤝",
+  "唔好散播謠言：聽過嘅說話要查清楚，先至同人講。🚫",
+  "尊重他人、唔欺負同學，就係維護社會和諧嘅第一步。💛",
+  "遇到衝突或者唔妥嘅事，唔好自己亂嚟，快啲問老師爸媽。🙋",
+  "守規則唔係限制你，而係令大家可以一齊安心玩同生活。⚖️",
+  "排隊、禮讓、講真話，都係為校園同社區和諧出一分力。🌟"
+],
 map:`
 ............................................................................................................................................
 .................*..........................CCC..........................*..........................CCC.....................................
@@ -360,7 +370,15 @@ map:`
 ############################################################################################################################################
 ############################################################################################################################################
 `},
-{name:'禮堂', theme:'hall', tip:'最後一關：沿梯級同彈跳墊執晒高台金幣！',
+{name:'禮堂', theme:'hall', tip:'最後一關：沿梯級同彈跳墊，溫習維護國安！',
+tips:[
+  "《香港國安法》幫香港防範危害國家安全嘅行為，社會先安穩。📘",
+  "守法就係保護香港：人人遵守法律，先可以安心生活學習。⚖️",
+  "愛國愛港由日常做起：尊敬國旗、守校規、關心身邊嘅人。🇭🇰",
+  "維護國家安全係香港居民嘅責任，小朋友都可以出一分力。✨",
+  "完成遊戲之後，將學到嘅國安小知識分享俾同學啦！🌟",
+  "國家安全穩妥，「一國兩制」先行得穩，香港先繁榮安定。💛"
+],
 map:`
 ............................................................................................................................................
 .................*........................CCC........................*........................CCC...........................................
@@ -448,7 +466,10 @@ function updateHud(){
 }
 
 function showTip(t){
-  tipText=t; tipTimer=150;
+  tipText=t;
+  const n=(t||'').length;
+  // ~3s for a short line; a little longer per extra character so P4–P6 can read a full sentence.
+  tipTimer=Math.min(360, 180+Math.max(0, n-20)*4);
   const el=document.getElementById('tip');
   el.textContent='⭐ '+t;
   el.classList.add('show');
@@ -1106,7 +1127,7 @@ window.__NSLMario = {
   startGame, loadLevel, getState: () => ({state, levelIdx, lives, totalStars, player: player && {x:player.x,y:player.y}, levelW: level&&level.w, coins: level&&level.coins.length, plats: level&&level.platforms.length}),
   warpToFlag: () => { if(player&&level&&level.flag){ player.x=level.flag.x-30; player.y=level.flag.y+level.flag.h-player.h-2; } },
   warpTo: (x,y) => { if(player){ player.x=x; player.y=y; player.vx=0; player.vy=0; } },
-  showTip: (t) => showTip(t||TIPS[0]),
+  showTip: (t) => showTip(t || (LEVEL_DEFS[levelIdx]&&LEVEL_DEFS[levelIdx].tips[0]) || ''),
   collectNearestStar: () => {
     if(!player||!level) return;
     const s=level.stars.find(x=>!x.got);
