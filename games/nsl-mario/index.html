@@ -28,6 +28,15 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
 #hud .left,#hud .right{display:flex;flex-direction:column;gap:2px;font-size:clamp(13px,2.8vw,16px);font-weight:700}
 #hud .hearts{color:#ff5252;letter-spacing:2px;font-size:clamp(16px,3.5vw,20px)}
 #hud .stars{color:#ffd700}
+#hud .firemeter{display:flex;align-items:center;gap:6px;margin-top:2px}
+#hud .firemeter .label{color:#ffe082;font-weight:800;font-size:clamp(12px,2.6vw,15px);white-space:nowrap}
+#hud .firemeter .label.ready{color:#fff8e1;text-shadow:0 0 8px #ff6d00,0 2px 4px rgba(0,0,0,.6)}
+#hud .firemeter .label.shake{animation:fireshake .28s linear}
+#hud .firebar{display:inline-block;width:74px;height:12px;border-radius:999px;background:rgba(0,0,0,.45);border:2px solid rgba(255,183,77,.9);overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+#hud .firebar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff6d00,#ffd54f);border-radius:999px}
+#hud .firebar.ready{border-color:#fff59d;box-shadow:0 0 10px rgba(255,152,0,.95)}
+#hud .firebar.ready>span{background:linear-gradient(90deg,#ff3d00,#fff176)}
+@keyframes fireshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 #hud .level{color:#81d4fa}
 #tip{position:absolute;top:18%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.95);color:#1a1a3e;padding:10px 16px;border-radius:14px;font-size:clamp(14px,2.8vw,17px);font-weight:700;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.35);border:3px solid #ffd700;z-index:8;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s}
 #tip.show{opacity:1}
@@ -38,6 +47,9 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
 .pad-btn:active,.pad-btn.active{background:rgba(255,215,0,.55);border-color:#ffd700;transform:scale(.94)}
 .pad-btn.jump{width:80px;height:80px;background:rgba(76,175,80,.35);border-color:rgba(76,175,80,.7);font-size:18px}
 .pad-btn.jump:active,.pad-btn.jump.active{background:rgba(76,175,80,.7)}
+.pad-btn.fire{width:74px;height:74px;border-radius:18px;background:rgba(60,60,70,.4);border-color:rgba(255,255,255,.4);font-size:16px;letter-spacing:1px}
+.pad-btn.fire.ready{background:rgba(255,87,34,.78);border-color:#ffe082;box-shadow:0 0 16px rgba(255,152,0,.9),0 4px 12px rgba(0,0,0,.25)}
+.pad-btn.fire:active,.pad-btn.fire.active{background:rgba(255,87,34,.92);transform:scale(.94)}
 #topBtns{position:absolute;top:8px;right:8px;z-index:12;display:flex;gap:6px;pointer-events:auto}
 #topBtns button{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
 .mascot-row{display:flex;gap:12px;justify-content:center;margin:12px 0;flex-wrap:wrap}
@@ -49,6 +61,8 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
 @media(max-width:600px){
   .pad-btn{width:58px;height:58px;font-size:24px}
   .pad-btn.jump{width:70px;height:70px;font-size:15px}
+  .pad-btn.fire{width:62px;height:62px;font-size:14px}
+  #hud .firebar{width:56px}
 }
 </style>
 </head>
@@ -64,6 +78,10 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
       <div class="left">
         <div class="hearts" id="hudLives">❤❤❤</div>
         <div class="stars" id="hudStars">★ 0</div>
+        <div class="firemeter">
+          <span class="label" id="hudFireLabel">火球 0/10</span>
+          <span class="firebar" id="hudFireBar"><span id="hudFireFill"></span></span>
+        </div>
       </div>
       <div class="right">
         <div class="level" id="hudLevel">第 1 關</div>
@@ -78,6 +96,7 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
         <div class="pad-btn" id="btnRight" data-key="right">▶</div>
       </div>
       <div class="pad">
+        <div class="pad-btn fire" id="btnFire" data-key="fire">火球</div>
         <div class="pad-btn jump" id="btnJump" data-key="jump">跳 ▲</div>
       </div>
     </div>
@@ -91,6 +110,7 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
         <h2>🎮 怎麼玩？</h2>
         <ul style="list-style:none;padding:0">
           <li>◀▶ 左右跑 · ▲ 跳躍（鍵盤或螢幕掣）</li>
+          <li>集滿 10 個金幣，按 X／J 或撳「火球」掣射大火球</li>
           <li>帶住夥伴「護星獸」一齊冒險！</li>
           <li>踩扁壞壞怪 · 收集金幣同「知識星」</li>
           <li>跳上高台／彈跳墊 ▲ 執高空金幣</li>
@@ -238,16 +258,19 @@ const SFX={
   hurt:()=>{beep(200,.15,'sawtooth',.1); setTimeout(()=>beep(120,.2,'sawtooth',.08),100)},
   clear:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.18,'sine',.09),i*120))},
   tip:()=>beep(660,.15,'sine',.07),
+  fire:()=>{beep(196,.07,'sawtooth',.06); setTimeout(()=>beep(392,.09,'square',.05),50); setTimeout(()=>beep(784,.12,'sine',.05),100)},
+  ready:()=>{beep(523,.08,'sine',.07); setTimeout(()=>beep(784,.12,'sine',.07),70)},
+  deny:()=>beep(130,.07,'square',.04),
   win:()=>{[523,659,784,1046,784,1046,1318].forEach((f,i)=>setTimeout(()=>beep(f,.2,'sine',.09),i*130))}
 };
 
 // ---------- Input ----------
-const keys={left:false,right:false,jump:false,jumpPressed:false};
-const km={'ArrowLeft':'left','ArrowRight':'right','KeyA':'left','KeyD':'right','Space':'jump','ArrowUp':'jump','KeyW':'jump','KeyZ':'jump'};
+const keys={left:false,right:false,jump:false,jumpPressed:false,fire:false,firePressed:false};
+const km={'ArrowLeft':'left','ArrowRight':'right','KeyA':'left','KeyD':'right','Space':'jump','ArrowUp':'jump','KeyW':'jump','KeyZ':'jump','KeyX':'fire','KeyJ':'fire'};
 window.addEventListener('keydown',e=>{
   const k=km[e.code]; if(!k) return;
   e.preventDefault();
-  if(k==='jump' && !keys.jump) keys.jumpPressed=true;
+  if((k==='jump'||k==='fire') && !keys[k]) keys[k+'Pressed']=true;
   keys[k]=true;
 });
 window.addEventListener('keyup',e=>{
@@ -256,7 +279,7 @@ window.addEventListener('keyup',e=>{
 });
 
 function bindPad(el, key){
-  const down=e=>{e.preventDefault(); if(key==='jump'&&!keys.jump) keys.jumpPressed=true; keys[key]=true; el.classList.add('active')};
+  const down=e=>{e.preventDefault(); if((key==='jump'||key==='fire')&&!keys[key]) keys[key+'Pressed']=true; keys[key]=true; el.classList.add('active')};
   const up=e=>{e.preventDefault(); keys[key]=false; el.classList.remove('active')};
   el.addEventListener('touchstart',down,{passive:false});
   el.addEventListener('touchend',up,{passive:false});
@@ -268,6 +291,7 @@ function bindPad(el, key){
 bindPad(document.getElementById('btnLeft'),'left');
 bindPad(document.getElementById('btnRight'),'right');
 bindPad(document.getElementById('btnJump'),'jump');
+bindPad(document.getElementById('btnFire'),'fire');
 
 // ---------- Level data ----------
 // Legend: # ground, = platform, B brick, C coin, * knowledge star, F flag, S start
@@ -320,7 +344,7 @@ map:`
 ...............=====.......................=====.......................=====.......................=====....................................
 ...............C.C.........................C.C.........................C.C.........................C.C......................................
 .....C...C....=====.......................=====.......................=====.......................=====.......................C...C.........
-...S..............E.....................E.....................E.....................E.....................E.........................F.......
+...S..............E.....................E..........E..........E.....................E.....................E.........................F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `},
@@ -343,7 +367,7 @@ map:`
 ...............==^==.......................==^==.......................==^==.......................==^==....................................
 ...............C.C.........................C.C.........................C.C.........................C.C......................................
 .....C...C....=====.......................=====.......................=====.......................=====.......................C...C.........
-...S............E.............A.................E.................A.................E.................A.............E...............F.......
+...S............E.............A........E........E.................A........A........E.................A.............E...............F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `},
@@ -366,7 +390,7 @@ map:`
 .............==^==.......................==^==.......................==^==.......................==^==......................................
 .............C.C.........................C.C.........................C.C.........................C.C........................................
 .....C...C..=====.......................=====.......................=====.......................=====.........................C...C.........
-...S............E...............R...............E.........A.............E...............R...............E.........A.........E.......F.......
+...S............E.......A.......R.......E.......E.........A......A......E.......E.......R.......R.......E.........A.........E.......F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `},
@@ -385,11 +409,11 @@ map:`
 ...............=======...................=======...................=======...................=======........................................
 ...............CCC........................*........................CCC........................*.............................................
 ..............=======...................=======...................=======...................=======.........................................
-..............CCC.......................CCC.......................CCC.......................CCC.............................................
+..............CCC.......................CCC.............A.........CCC.......................CCC.............................................
 .............==^==.....................==^==.....................==^==.....................==^==............................................
 .............C.C.......................C.C.......................C.C.......................C.C..............................................
 .....C...C..=====.....................=====.....................=====.....................=====...............................C...C.........
-...S..........E.........R.........E.........A.........E.........R.........E.........A.........E.........A.........E.........E.......F.......
+...S..........E.........R....A....E.........A....E....E.........R....R....E.........A....A....E.........A....E....E.........E.......F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `}
@@ -403,6 +427,8 @@ let levelIdx=0, lives=3, totalStars=0, levelStars=0, invuln=0, cameraX=0;
 let player=null, level=null, animT=0, bannerTimer=0, tipTimer=0, tipText='';
 let spawnSafe=0;
 let particles=[], flagClimb=0, wonFlag=false;
+const FIRE_COST=10;
+let fireCoins=0, fireCooldown=0, fireballs=[];
 
 function makePlayer(x,y){
   return {x,y,w:34,h:46,vx:0,vy:0,onGround:false,facing:1,jumpBuf:0,coyote:0,dead:false,frame:0};
@@ -423,6 +449,7 @@ function startGame(){
   document.getElementById('controls').classList.toggle('hidden', !touch);
   document.getElementById('btnMute').textContent=audioOn?'🔊':'🔇';
   lives=3; totalStars=0; levelIdx=0;
+  fireCoins=0; fireballs=[]; fireCooldown=0;
   ensureAudio();
   loadLevel(0);
 }
@@ -442,8 +469,9 @@ function loadLevel(i){
   };
   player=makePlayer(level.start.x, level.start.y);
   cameraX=0; levelStars=0; invuln=150; particles=[]; flagClimb=0; wonFlag=false; tipTimer=0;
+  fireballs=[]; fireCooldown=0;
   document.getElementById('tip').classList.remove('show'); // start safe
-  keys.jumpPressed=false;
+  keys.jumpPressed=false; keys.firePressed=false;
   hideScreens();
   document.getElementById('hud').style.display='flex';
   document.getElementById('btnPause').style.display='inline-block';
@@ -457,12 +485,32 @@ function loadLevel(i){
   setTimeout(()=>document.getElementById('levelBanner').classList.remove('show'),1400);
 }
 
+function fireCharges(){ return Math.floor(fireCoins/FIRE_COST); }
+function fireHudText(){
+  const charges=fireCharges();
+  const prog=fireCoins%FIRE_COST;
+  if(charges>0 && prog===0) return '火球 '+FIRE_COST+'/'+FIRE_COST+' · 可射×'+charges;
+  if(charges>0) return '火球 '+prog+'/'+FIRE_COST+' · 可射×'+charges;
+  return '火球 '+prog+'/'+FIRE_COST;
+}
 function updateHud(){
   const hearts = lives>0 ? '❤'.repeat(lives) : '💔';
   document.getElementById('hudLives').textContent=hearts;
   document.getElementById('hudStars').textContent='★ '+totalStars;
   document.getElementById('hudLevel').textContent='第 '+(levelIdx+1)+' / 4 關';
   document.getElementById('hudName').textContent=level?level.name:'';
+  const charges=fireCharges();
+  const prog=fireCoins%FIRE_COST;
+  const fill=(charges>0 && prog===0)?100:prog*(100/FIRE_COST);
+  const label=document.getElementById('hudFireLabel');
+  const bar=document.getElementById('hudFireBar');
+  const fillEl=document.getElementById('hudFireFill');
+  if(label) label.textContent=fireHudText();
+  if(fillEl) fillEl.style.width=fill+'%';
+  if(label) label.classList.toggle('ready', charges>0);
+  if(bar) bar.classList.toggle('ready', charges>0);
+  const btn=document.getElementById('btnFire');
+  if(btn) btn.classList.toggle('ready', charges>0);
 }
 
 function showTip(t){
@@ -533,17 +581,53 @@ function burst(x,y,color,n){
   }
 }
 
+function defeatEnemy(e, color){
+  if(!e.alive) return;
+  e.alive=false;
+  totalStars++; levelStars++;
+  SFX.stomp();
+  burst(e.x+e.w/2, e.y+e.h/2, color|| (e.type==='bat'?'#7e57c2':e.type==='rumor'?'#90a4ae':'#ef5350'), 10);
+  updateHud();
+}
+
+function tryFire(){
+  if(state!=='play'||!player||player.dead) return;
+  if(fireCooldown>0) return;
+  if(fireCoins<FIRE_COST){
+    fireCooldown=14;
+    const lab=document.getElementById('hudFireLabel');
+    if(lab){ lab.classList.remove('shake'); void lab.offsetWidth; lab.classList.add('shake'); }
+    SFX.deny();
+    return;
+  }
+  fireCoins-=FIRE_COST;
+  fireCooldown=18;
+  const dir=player.facing<0?-1:1;
+  fireballs.push({
+    x: player.x+(dir>0?player.w-8:-46),
+    y: player.y+2,
+    w:52,
+    h:44,
+    vx: dir*7.6,
+    life: 86
+  });
+  SFX.fire();
+  burst(player.x+player.w/2+dir*16, player.y+20, '#ffab40', 8);
+  updateHud();
+}
+
 // ---------- Update ----------
 function update(){
   animT++;
   if(state==='banner'){
+    keys.firePressed=false;
     bannerTimer--;
     if(bannerTimer<=0) state='play';
     // still draw but limited update of camera
     cameraX=Math.max(0, Math.min(player.x-W*0.35, level.w-W));
     return;
   }
-  if(state!=='play') return;
+  if(state!=='play'){ keys.firePressed=false; return; }
 
   if(tipTimer>0){ tipTimer--; if(tipTimer<=0) document.getElementById('tip').classList.remove('show'); }
   if(invuln>0) invuln--;
@@ -555,6 +639,9 @@ function update(){
   if(keys.right){ player.vx+=accel; player.facing=1; }
   if(!keys.left && !keys.right) player.vx*=friction;
   player.vx=Math.max(-maxSpd, Math.min(maxSpd, player.vx));
+
+  if(fireCooldown>0) fireCooldown--;
+  if(keys.firePressed){ keys.firePressed=false; tryFire(); }
 
   if(player.onGround) player.coyote=8; else if(player.coyote>0) player.coyote--;
   if(keys.jumpPressed){ player.jumpBuf=10; keys.jumpPressed=false; }
@@ -587,11 +674,23 @@ function update(){
 
   // Coins
   for(const c of level.coins){
-    if(!c.got && rects(player,c)){ c.got=true; totalStars++; levelStars++; updateHud(); SFX.coin(); burst(c.x+10,c.y+10,'#ffd700',6); }
+    if(!c.got && rects(player,c)){
+      c.got=true; totalStars++; levelStars++; fireCoins++;
+      if(fireCoins>0 && fireCoins%FIRE_COST===0){ SFX.ready(); burst(player.x+player.w/2, player.y, '#ff6d00', 10); }
+      updateHud(); SFX.coin(); burst(c.x+10,c.y+10,'#ffd700',6);
+    }
   }
   // Stars (knowledge)
   for(const s of level.stars){
     if(!s.got && rects(player,s)){ s.got=true; totalStars+=3; levelStars+=3; updateHud(); showTip(s.tip); burst(s.x+14,s.y+14,'#7c4dff',10); }
+  }
+
+  // Fireballs travel, then enemies can be cleared by a hit
+  for(const fb of fireballs){
+    fb.x+=fb.vx; fb.life--;
+    if((animT)%2===0){
+      particles.push({x:fb.x+fb.w*(fb.vx>0?0.2:0.8), y:fb.y+fb.h/2, vx:-Math.sign(fb.vx)*(1+Math.random()*2), vy:(Math.random()-0.5)*2, life:14+Math.random()*8, color:Math.random()<.5?'#ff6d00':'#ffca28', r:3+Math.random()*4});
+    }
   }
 
   // Enemies
@@ -623,14 +722,31 @@ function update(){
       if(e.x<40||e.x>level.w-60) e.vx*=-1;
     }
 
+    for(const fb of fireballs){
+      if(fb.life<=0 || !e.alive) continue;
+      if(rects(e, fb)){
+        defeatEnemy(e, '#ff6d00');
+        burst(e.x+e.w/2, e.y+e.h/2, '#ffd54f', 8);
+      }
+    }
+    if(!e.alive) continue;
+
     if(rects(player,e)){
       // stomp?
       if(player.vy>0 && player.y+player.h-e.y<18){
-        e.alive=false; player.vy=-8; SFX.stomp(); totalStars++; levelStars++; updateHud();
-        burst(e.x+e.w/2, e.y+e.h/2, e.type==='bat'?'#7e57c2':e.type==='rumor'?'#90a4ae':'#ef5350', 10);
+        player.vy=-8;
+        defeatEnemy(e);
       } else {
         hurtPlayer();
       }
+    }
+  }
+
+  for(let i=fireballs.length-1;i>=0;i--){
+    const fb=fireballs[i];
+    if(fb.life<=0 || fb.x<-90 || fb.x>level.w+40){
+      burst(fb.x+fb.w/2, fb.y+fb.h/2, '#ffd54f', 5);
+      fireballs.splice(i,1);
     }
   }
 
@@ -913,6 +1029,38 @@ function drawPlayer(){
   ctx.restore(); ctx.globalAlpha=1;
 }
 
+function drawFireball(fb){
+  const x=fb.x-cameraX, y=fb.y;
+  if(x<-90||x>W+90) return;
+  const dir=fb.vx<0?-1:1;
+  const flick=Math.sin(animT*0.85+fb.y)*2.5;
+  ctx.save();
+  ctx.translate(x+fb.w/2, y+fb.h/2);
+  ctx.scale(dir,1);
+  ctx.globalAlpha=0.45;
+  ctx.fillStyle='#ff6d00';
+  ctx.beginPath(); ctx.ellipse(-26, 0, 26, 14, 0, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha=0.3;
+  ctx.beginPath(); ctx.ellipse(-40, 0, 16, 8, 0, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha=1;
+  ctx.fillStyle='#ff3d00';
+  ctx.beginPath();
+  for(let i=0;i<9;i++){
+    const a=(Math.PI*2*i)/9+animT*0.22;
+    const rad=i%2===0?30+flick:18;
+    const px=Math.cos(a)*rad, py=Math.sin(a)*rad;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#ff9100';
+  ctx.beginPath(); ctx.arc(0,0,18,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#ffd54f';
+  ctx.beginPath(); ctx.arc(3,-1,12,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#fffde7';
+  ctx.beginPath(); ctx.arc(7,-3,5.5,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
 function drawEnemy(e){
   if(!e.alive) return;
   const x=e.x-cameraX, y=e.y;
@@ -1017,6 +1165,7 @@ function draw(){
   for(const c of level.coins) drawCoin(c);
   for(const s of level.stars) drawStar(s);
   for(const e of level.enemies) drawEnemy(e);
+  for(const fb of fireballs) drawFireball(fb);
   if(player && !player.dead) drawPlayer();
   drawParticles();
 
@@ -1124,7 +1273,11 @@ document.body.addEventListener('touchmove',e=>{ if(e.target.closest('.pad-btn'))
 
 // debug hooks for QA screenshots (harmless)
 window.__NSLMario = {
-  startGame, loadLevel, getState: () => ({state, levelIdx, lives, totalStars, player: player && {x:player.x,y:player.y}, levelW: level&&level.w, coins: level&&level.coins.length, plats: level&&level.platforms.length}),
+  startGame, loadLevel, getState: () => ({state, levelIdx, lives, totalStars, fireCoins, fireCharges: fireCharges(), fireText: fireHudText(), player: player && {x:player.x,y:player.y,facing:player.facing}, levelW: level&&level.w, coins: level&&level.coins.length, plats: level&&level.platforms.length, enemyTotal: level?level.enemies.length:0, aliveEnemies: level?level.enemies.filter(e=>e.alive).length:0, fireballs: fireballs.map(f=>({x:f.x,y:f.y,vx:f.vx,life:f.life})), starTips: level?level.stars.map(s=>s.tip):[],
+    pendingCoins: level?level.coins.filter(c=>!c.got).map(c=>({x:c.x,y:c.y})):[],
+    enemies: level?level.enemies.filter(e=>e.alive).map(e=>({x:e.x,y:e.y,type:e.type})):[]}),
+  setFireCoins: (n)=>{ fireCoins=Math.max(0,n|0); updateHud(); },
+  tapFire: ()=>{ keys.firePressed=true; },
   warpToFlag: () => { if(player&&level&&level.flag){ player.x=level.flag.x-30; player.y=level.flag.y+level.flag.h-player.h-2; } },
   warpTo: (x,y) => { if(player){ player.x=x; player.y=y; player.vx=0; player.vy=0; } },
   showTip: (t) => showTip(t || (LEVEL_DEFS[levelIdx]&&LEVEL_DEFS[levelIdx].tips[0]) || ''),
