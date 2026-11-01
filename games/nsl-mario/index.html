@@ -6,13 +6,16 @@
 <title>國安過關大冒險</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-html,body{width:100%;height:100%;overflow:hidden;background:#1a1a3e;font-family:"PingFang HK","Noto Sans TC","Microsoft JhengHei",sans-serif;color:#fff}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#1a1a3e;font-family:"PingFang HK","Noto Sans TC","Microsoft JhengHei",sans-serif;color:#fff}
 #wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0d0d2b}
 canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touch-action:none;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.45)}
 #ui{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column}
 #ui>*{pointer-events:auto}
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,20,55,.88);padding:16px;text-align:center;z-index:10}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:rgba(20,20,55,.88);padding:max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));text-align:center;z-index:10}
+.screen::before,.screen::after{content:"";flex:1 0 0px;min-height:0;width:100%;pointer-events:none}
 .screen.hidden{display:none}
+#screenTitle .title-main{width:100%;display:flex;flex-direction:column;align-items:center}
+#screenTitle .title-actions{width:100%;display:flex;justify-content:center;flex:0 0 auto}
 .screen h1{font-size:clamp(28px,6vw,48px);background:linear-gradient(135deg,#ff9800,#e91e63,#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;font-weight:900;letter-spacing:2px}
 .screen .sub{color:#b0b0d0;font-size:clamp(13px,2.5vw,16px);margin-bottom:18px}
 .screen .card{background:rgba(40,40,90,.92);border:2px solid rgba(255,215,0,.35);border-radius:16px;padding:16px 20px;max-width:420px;width:92%;margin:8px 0;box-shadow:0 6px 24px rgba(0,0,0,.3)}
@@ -52,8 +55,9 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
 .pad-btn.fire:active,.pad-btn.fire.active{background:rgba(255,87,34,.92);transform:scale(.94)}
 #topBtns{position:absolute;top:8px;right:8px;z-index:12;display:flex;gap:6px;pointer-events:auto}
 #topBtns button{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
-.mascot-row{display:flex;gap:12px;justify-content:center;margin:12px 0;flex-wrap:wrap}
+.mascot-row{display:flex;gap:12px;justify-content:center;align-items:flex-start;margin:12px 0;flex-wrap:wrap;width:100%}
 .mascot-row canvas{width:88px;height:94px;border-radius:12px}
+.mascot-label{font-size:12px;color:#ffd700;font-weight:800;text-shadow:0 1px 3px #000;line-height:1.15;white-space:nowrap}
 #levelBanner{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);z-index:9;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;width:min(92%,640px)}
 #levelBanner.show{opacity:1}
 #levelBanner h2{font-size:clamp(24px,5vw,40px);color:#ffd700;text-shadow:0 3px 10px rgba(0,0,0,.7)}
@@ -63,6 +67,42 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
   .pad-btn.jump{width:70px;height:70px;font-size:15px}
   .pad-btn.fire{width:62px;height:62px;font-size:14px}
   #hud .firebar{width:56px}
+  .mascot-row{flex-wrap:nowrap;gap:4px;margin:6px 0}
+  .mascot-row canvas{width:clamp(42px,13.2vw,72px);height:auto;aspect-ratio:88/94;border-radius:8px}
+  .mascot-label{font-size:clamp(9px,2.5vw,12px)}
+  #screenTitle h1{font-size:clamp(22px,6.4vw,34px);letter-spacing:0;margin-bottom:2px}
+  #screenTitle .sub{font-size:13px;margin-bottom:6px}
+  #screenTitle .card{padding:10px 12px;margin:4px 0}
+  #screenTitle .card h2{font-size:15px;margin-bottom:6px}
+  #screenTitle .card li{font-size:13px;line-height:1.45;margin:2px 0}
+  #screenTitle .opts{margin:4px 0 2px;font-size:13px;gap:12px}
+  #screenTitle .btn{margin:4px 8px;padding:11px 28px}
+}
+/* Short phones and any narrow portrait: keep 開始冒險 on screen; rules scroll above it. */
+@media (max-width:600px), (max-height:740px){
+  #screenTitle{overflow:hidden;padding-bottom:0}
+  #screenTitle::before,#screenTitle::after{display:none}
+  #screenTitle .title-main{
+    flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y
+  }
+  #screenTitle .title-main::before,#screenTitle .title-main::after{content:"";flex:1 0 0px;min-height:0;width:100%}
+  #screenTitle .title-actions{
+    position:relative;z-index:2;
+    padding:6px 12px calc(10px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(20,20,55,0), rgba(20,20,55,.96) 36%, rgba(18,18,48,.98))
+  }
+  #screenTitle .title-actions .btn{min-height:44px;margin-top:2px;margin-bottom:2px}
+}
+@media (max-height:520px){
+  .mascot-row{flex-wrap:nowrap;gap:6px;margin:4px 0}
+  .mascot-row canvas{width:56px;height:60px;border-radius:8px}
+  .mascot-label{font-size:11px}
+  #screenTitle h1{font-size:clamp(22px,5vw,32px);letter-spacing:0;margin-bottom:2px}
+  #screenTitle .sub{margin-bottom:4px}
+  #screenTitle .card{padding:8px 12px;margin:4px 0}
+  #screenTitle .card h2{margin-bottom:4px}
+  #screenTitle .card li{font-size:13px;line-height:1.4;margin:1px 0}
 }
 </style>
 </head>
@@ -103,26 +143,30 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
 
     <!-- TITLE -->
     <div class="screen" id="screenTitle">
-      <h1>🛡 國安過關大冒險</h1>
-      <p class="sub">一起守護香港 · 認識國家安全</p>
-      <div class="mascot-row" id="titleMasots"></div>
-      <div class="card">
-        <h2>🎮 怎麼玩？</h2>
-        <ul style="list-style:none;padding:0">
-          <li>◀▶ 左右跑 · ▲ 跳躍（鍵盤或螢幕掣）</li>
-          <li>集滿 10 個金幣，按 X／J 或撳「火球」掣射大火球</li>
-          <li>帶住夥伴「護星獸」一齊冒險！</li>
-          <li>踩扁壞壞怪 · 收集金幣同「知識星」</li>
-          <li>竊聽蝠同飛針蜂會喺空中飛，要跳準時間，或者用火球打低</li>
-          <li>跳上高台／彈跳墊 ▲ 執高空金幣</li>
-          <li>到達終點旗杆過關 · 每關約 1½–2 分鐘 · 適合小四至小六</li>
-        </ul>
+      <div class="title-main">
+        <h1>🛡 國安過關大冒險</h1>
+        <p class="sub">一起守護香港 · 認識國家安全</p>
+        <div class="mascot-row" id="titleMasots"></div>
+        <div class="card">
+          <h2>🎮 怎麼玩？</h2>
+          <ul style="list-style:none;padding:0">
+            <li>◀▶ 左右跑 · ▲ 跳躍（鍵盤或螢幕掣）</li>
+            <li>集滿 10 個金幣，按 X／J 或撳「火球」掣射大火球</li>
+            <li>帶住夥伴「護星獸」一齊冒險！</li>
+            <li>踩扁壞壞怪 · 收集金幣同「知識星」</li>
+            <li>竊聽蝠同飛針蜂會喺空中飛，要跳準時間，或者用火球打低</li>
+            <li>跳上高台／彈跳墊 ▲ 執高空金幣</li>
+            <li>到達終點旗杆過關 · 每關約 1½–2 分鐘 · 適合小四至小六</li>
+          </ul>
+        </div>
+        <div class="opts">
+          <label><input type="checkbox" id="optSound" checked> 🔊 音效</label>
+          <label><input type="checkbox" id="optTouch" checked> 📱 觸控掣</label>
+        </div>
       </div>
-      <div class="opts">
-        <label><input type="checkbox" id="optSound" checked> 🔊 音效</label>
-        <label><input type="checkbox" id="optTouch" checked> 📱 觸控掣</label>
+      <div class="title-actions">
+        <button class="btn" id="btnStart">開始冒險 ▶</button>
       </div>
-      <button class="btn" id="btnStart">開始冒險 ▶</button>
     </div>
 
     <!-- PAUSE -->
@@ -1361,7 +1405,7 @@ function drawTitleMascots(){
     wrap.appendChild(cv);
     const lab=document.createElement('div');
     lab.textContent=labels[idx];
-    lab.style.cssText='font-size:12px;color:#ffd700;font-weight:800;text-shadow:0 1px 3px #000';
+    lab.className='mascot-label';
     wrap.appendChild(lab);
     row.appendChild(wrap);
   });
@@ -1376,7 +1420,7 @@ function drawTitleMascots(){
   mothWrap.appendChild(mothCv);
   const mothLab=document.createElement('div');
   mothLab.textContent='飛針蜂';
-  mothLab.style.cssText='font-size:12px;color:#ffd700;font-weight:800;text-shadow:0 1px 3px #000';
+  mothLab.className='mascot-label';
   mothWrap.appendChild(mothLab);
   row.appendChild(mothWrap);
 }
