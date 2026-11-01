@@ -113,6 +113,7 @@ canvas#game{display:block;max-width:100%;max-height:100%;background:#87CEEB;touc
           <li>集滿 10 個金幣，按 X／J 或撳「火球」掣射大火球</li>
           <li>帶住夥伴「護星獸」一齊冒險！</li>
           <li>踩扁壞壞怪 · 收集金幣同「知識星」</li>
+          <li>竊聽蝠同飛針蜂會喺空中飛，要跳準時間，或者用火球打低</li>
           <li>跳上高台／彈跳墊 ▲ 執高空金幣</li>
           <li>到達終點旗杆過關 · 每關約 1½–2 分鐘 · 適合小四至小六</li>
         </ul>
@@ -295,15 +296,76 @@ bindPad(document.getElementById('btnFire'),'fire');
 
 // ---------- Level data ----------
 // Legend: # ground, = platform, B brick, C coin, * knowledge star, F flag, S start
-// E spider, A bat, R rumor cloud, P pipe, ^ bounce pad, . empty
+// E spider, A bat (airborne), M swooping moth, L high lane moth, R rumor cloud
+// P pipe, ^ bounce pad, . empty
+// Flying enemies stay in the open shafts between platforms and never patrol the opening run.
 
 function buildLevel(def){
   const rows=def.map.split('\n').filter(r=>r.length);
   const h=rows.length, w=Math.max(...rows.map(r=>r.length));
   const solids=[], platforms=[], coins=[], stars=[], enemies=[], bounces=[];
   const levelTips=def.tips||[];
+  const pace=def.pace||1;
   let starN=0, flag=null;
   let start={x:2*TILE,y:(h-3)*TILE};
+  const platCol=[];
+  for(let x=0;x<w;x++) platCol[x]=false;
+  for(let y=0;y<h;y++){
+    if(y!==2 && y!==4 && y!==6 && y!==8) continue;
+    const row=rows[y]||'';
+    for(let x=0;x<w;x++){
+      const ch=row[x]||'.';
+      if(ch==='='||ch==='^'||ch==='#') platCol[x]=true;
+    }
+  }
+  let flagCol=null;
+  for(let y=0;y<h;y++){
+    const row=rows[y]||'';
+    const at=row.indexOf('F');
+    if(at>=0) flagCol=at;
+  }
+  const OPEN=20; // tiles of runway after the start, clear enough for P4–P6
+  function shaftBounds(col){
+    let a=col, b=col;
+    while(a>0 && !platCol[a-1]) a--;
+    while(b<w-1 && !platCol[b+1]) b++;
+    let minC=Math.max(a+1, OPEN);
+    let maxC=Math.max(minC+2, b-1);
+    if(flagCol!=null) maxC=Math.min(maxC, flagCol-4);
+    if(maxC<minC) maxC=minC;
+    return {minX:minC*TILE, maxX:maxC*TILE};
+  }
+  function addGround(px, py, col){
+    const span=6*TILE;
+    const minX=Math.max(OPEN*TILE, px-span);
+    let maxX=Math.min((w-8)*TILE, px+span);
+    if(flagCol!=null) maxX=Math.min(maxX, (flagCol-4)*TILE);
+    if(maxX<minX) maxX=minX+TILE;
+    const dir=(col%2===0)?-1:1;
+    enemies.push({x:px+2,y:py+4,w:36,h:36,vx:dir*0.8*pace,type:'spider',alive:true,ground:true,minX,maxX});
+  }
+  function addFly(px, py, col, spec){
+    let minX, maxX;
+    if(platCol[col]){
+      const span=(spec.span||5)*TILE;
+      minX=Math.max(OPEN*TILE, px-span);
+      maxX=Math.min((w-8)*TILE, px+span);
+      if(flagCol!=null) maxX=Math.min(maxX, (flagCol-4)*TILE);
+    } else {
+      const bounds=shaftBounds(col);
+      minX=bounds.minX; maxX=bounds.maxX;
+    }
+    if(maxX<minX) maxX=minX+TILE;
+    const dir=(col%2===0)?-1:1;
+    enemies.push({
+      x:px+2, y:spec.baseY, w:spec.w, h:spec.h,
+      vx:dir*spec.speed*pace,
+      type:spec.type, alive:true, ground:false,
+      baseY:spec.baseY, amp:spec.amp, freq:spec.freq,
+      phase:col*1.31+py*0.017,
+      minX, maxX, pattern:spec.pattern
+    });
+  }
   for(let y=0;y<h;y++){
     for(let x=0;x<w;x++){
       const ch=(rows[y][x]||'.');
@@ -315,9 +377,32 @@ function buildLevel(def){
       else if(ch==='^'){ platforms.push({x:px,y:py,w:TILE,h:TILE,type:'plat'}); bounces.push({x:px+4,y:py+18,w:TILE-8,h:22}); }
       else if(ch==='C') coins.push({x:px+10,y:py+10,w:20,h:20,got:false});
       else if(ch==='*'){ stars.push({x:px+6,y:py+6,w:28,h:28,got:false,tip:levelTips.length?levelTips[starN%levelTips.length]:''}); starN++; }
-      else if(ch==='E') enemies.push({x:px+2,y:py+4,w:36,h:36,vx:-0.7,type:'spider',alive:true,ground:true});
-      else if(ch==='A') enemies.push({x:px+2,y:py+2,w:36,h:32,vx:0.9,vy:0,type:'bat',alive:true,ground:false,baseY:py});
-      else if(ch==='R') enemies.push({x:px+0,y:py+2,w:40,h:34,vx:-0.55,type:'rumor',alive:true,ground:false,baseY:py});
+      else if(ch==='E') addGround(px, py, x);
+      else if(ch==='A'){
+        // Three airborne bands: low dip, jump-lane, and a wider mid bob.
+        const spec=y>=7
+          ? {type:'bat',pattern:'bob',baseY:316,amp:30,freq:0.092,speed:1.45,w:36,h:30}
+          : y<=5
+          ? {type:'bat',pattern:'bob',baseY:206,amp:34,freq:0.068,speed:1.55,w:36,h:30}
+          : {type:'bat',pattern:'bob',baseY:258,amp:46,freq:0.08,speed:1.5,w:36,h:30};
+        addFly(px, py, x, spec);
+      }
+      else if(ch==='M'){
+        // Swoop crosses the run lane and the jump lane so kids time a jump or shoot.
+        const spec=y<=4
+          ? {type:'moth',pattern:'swoop',baseY:230,amp:104,freq:0.036,speed:1.32,w:44,h:34}
+          : y>=6
+          ? {type:'moth',pattern:'swoop',baseY:274,amp:78,freq:0.044,speed:1.4,w:44,h:34}
+          : {type:'moth',pattern:'swoop',baseY:252,amp:90,freq:0.04,speed:1.36,w:44,h:34};
+        addFly(px, py, x, spec);
+      }
+      else if(ch==='L'){
+        addFly(px, py, x, {type:'moth',pattern:'lane',baseY:126,amp:16,freq:0.1,speed:2.05,w:40,h:32});
+      }
+      else if(ch==='R'){
+        if(y>=8) addFly(px, py, x, {type:'rumor',pattern:'lane',baseY:py+2,amp:14,freq:0.05,speed:0.6,w:40,h:34,span:5});
+        else addFly(px, py, x, {type:'rumor',pattern:'bob',baseY:228,amp:42,freq:0.046,speed:0.85,w:40,h:34});
+      }
       else if(ch==='F'){ flag={x:px,y:py-TILE*3,w:12,h:TILE*4}; }
       else if(ch==='S'){ start={x:px,y:py}; }
     }
@@ -326,7 +411,7 @@ function buildLevel(def){
 }
 
 const LEVEL_DEFS=[
-{name:'校園走廊', theme:'corridor', tip:'沿梯級跳上去執金幣，順手拾星星學國安！',
+{name:'校園走廊', theme:'corridor', pace:1, tip:'沿梯級跳上去執金幣，順手拾星星學國安！',
 tips:[
   "國家安全即係國家同香港平安穩定，我哋先可以安心上學。🏠",
   "總體國家安全觀提醒我哋：政治、經濟、社會同網絡等都要保護。🌱",
@@ -339,16 +424,16 @@ map:`
 ..................CCC..........................*..........................CCC.........................CCC...................................
 .................=======.....................=======.....................=======.....................=======................................
 .................CCC.........................CCC..........................*..........................CCC....................................
-................=======.....................=======.....................=======.....................=======.................................
-................CCC.........................CCC.........................CCC.........................CCC.....................................
-...............=====.......................=====.......................=====.......................=====....................................
-...............C.C.........................C.C.........................C.C.........................C.C......................................
+................=======.....................=======.............M.......=======.....................=======.................................
+................CCC.........................CCC.............A...........CCC.........................CCC.............A.......................
+...............=====.......................=====.......................=====................M......=====................M...................
+...............C.C............A............C.C.........................C.C..............A..........C.C......................................
 .....C...C....=====.......................=====.......................=====.......................=====.......................C...C.........
-...S..............E.....................E..........E..........E.....................E.....................E.........................F.......
+...S..................E.....................E.....E...............E...............E...............E...............E.................F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `},
-{name:'電腦室', theme:'computer', tip:'踩綠色彈跳墊上高台，星星教資訊安全！',
+{name:'電腦室', theme:'computer', pace:1.06, tip:'踩綠色彈跳墊上高台，星星教資訊安全！',
 tips:[
   "網絡安全係國家安全嘅一部分，上網都要對自己講嘅嘢負責。💻",
   "唔好亂傳未查證嘅消息，不實資訊會令人驚慌，亦危害社會。🔍",
@@ -361,17 +446,17 @@ map:`
 ............................................................................................................................................
 ..................CCC..........................*..........................CCC.........................CCC...................................
 .................=======.....................=======.....................=======.....................=======................................
-.................CCC.........................CCC..........................*..........................CCC....................................
-................=======.....................=======.....................=======.....................=======.................................
-................CCC.........................CCC.........................CCC.........................CCC.....................................
-...............==^==.......................==^==.......................==^==.......................==^==....................................
-...............C.C.........................C.C.........................C.C.........................C.C......................................
+.................CCC.........................CCC................L.........*.................L........CCC..............L.....................
+................=======.........M...........=======...........M.........=======...........M.........=======.................................
+................CCC.........................CCC...................A.....CCC.....................A...CCC.................A...................
+...............==^==.......................==^==.......................==^==.......................==^==..................M.................
+...............C.C..........A..............C.C..........A..............C.C..........A..............C.C............A.........................
 .....C...C....=====.......................=====.......................=====.......................=====.......................C...C.........
-...S............E.............A........E........E.................A........A........E.................A.............E...............F.......
+...S..................E...........E...........E...........E...........E...........E...........E...........E...........E.............F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `},
-{name:'操場', theme:'playground', tip:'平台同彈跳墊執金幣，星星講社會和諧！',
+{name:'操場', theme:'playground', pace:1.14, tip:'平台同彈跳墊執金幣，星星講社會和諧！',
 tips:[
   "社會安全靠大家守法守規，校園同社區先會和諧安定。🤝",
   "唔好散播謠言：聽過嘅說話要查清楚，先至同人講。🚫",
@@ -384,17 +469,17 @@ map:`
 ............................................................................................................................................
 .................*..........................CCC..........................*..........................CCC.....................................
 ...............=======.....................=======.....................=======.....................=======..................................
-...............CCC..........................*..........................CCC.........................CCC......................................
-..............=======.....................=======.....................=======.....................=======...................................
-..............CCC.........................CCC.........................CCC.........................CCC.......................................
-.............==^==.......................==^==.......................==^==.......................==^==......................................
-.............C.C.........................C.C.........................C.C.........................C.C........................................
+...............CCC..............L...........*...........L..............CCC..............L..........CCC............L.........................
+..............=======.........M...........=======...........M.........=======.......M.............=======...........M.......................
+..............CCC.................A.......CCC.................A.......CCC.................A.......CCC.......................A...............
+.............==^==..........R............==^==............R..........==^==............R..........==^==..................R...M...............
+.............C.C..........A..............C.C..........A..............C.C..........A..............C.C............A...........................
 .....C...C..=====.......................=====.......................=====.......................=====.........................C...C.........
-...S............E.......A.......R.......E.......E.........A......A......E.......E.......R.......R.......E.........A.........E.......F.......
+...S..................E.......E.....R...E.......E.........E.........E.....R...E.........E.........E...R.....E.........E.............F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `},
-{name:'禮堂', theme:'hall', tip:'最後一關：沿梯級同彈跳墊，溫習維護國安！',
+{name:'禮堂', theme:'hall', pace:1.22, tip:'最後一關：沿梯級同彈跳墊，溫習維護國安！',
 tips:[
   "《香港國安法》幫香港防範危害國家安全嘅行為，社會先安穩。📘",
   "守法就係保護香港：人人遵守法律，先可以安心生活學習。⚖️",
@@ -407,13 +492,13 @@ map:`
 ............................................................................................................................................
 .................*........................CCC........................*........................CCC...........................................
 ...............=======...................=======...................=======...................=======........................................
-...............CCC........................*........................CCC........................*.............................................
-..............=======...................=======...................=======...................=======.........................................
-..............CCC.......................CCC.............A.........CCC.......................CCC.............................................
-.............==^==.....................==^==.....................==^==.....................==^==............................................
-.............C.C.......................C.C.......................C.C.......................C.C..............................................
+...............CCC............L...........*.............L..........CCC............L...........*...............L.............................
+..............=======.......M...........=======.......M...........=======.......M...........=======...............M.........................
+..............CCC...............A...M...CCC...............A.......CCC...............A.......CCC.................A.......M...A...............
+.............==^==........R............==^==........R.......A....==^==........R.......A....==^==............R.........A...R.................
+.............C.C........A..............C.C........A..............C.C........A..............C.C..........A.............A.....................
 .....C...C..=====.....................=====.....................=====.....................=====...............................C...C.........
-...S..........E.........R....A....E.........A....E....E.........R....R....E.........A....A....E.........A....E....E.........E.......F.......
+...S..................E.......E...R...E.......E.......E.......E...R.....E.......E.........E.....R...E.........E.........E...........F.......
 ############################################################################################################################################
 ############################################################################################################################################
 `}
@@ -586,7 +671,8 @@ function defeatEnemy(e, color){
   e.alive=false;
   totalStars++; levelStars++;
   SFX.stomp();
-  burst(e.x+e.w/2, e.y+e.h/2, color|| (e.type==='bat'?'#7e57c2':e.type==='rumor'?'#90a4ae':'#ef5350'), 10);
+  const tint=e.type==='moth'?'#ffb300':e.type==='bat'?'#7e57c2':e.type==='rumor'?'#90a4ae':'#ef5350';
+  burst(e.x+e.w/2, e.y+e.h/2, color||tint, 10);
   updateHud();
 }
 
@@ -698,7 +784,7 @@ function update(){
     if(!e.alive) continue;
     if(e.type==='spider'){
       e.x+=e.vx;
-      // turn at edges / walls
+      // turn at edges / walls, and stay on a short beat so the start stays clear
       const foot={x:e.x+(e.vx>0?e.w:0), y:e.y+e.h+2, w:2, h:2};
       let onFloor=false;
       for(const b of [...level.solids,...level.platforms]){ if(rects(foot,b)) onFloor=true; }
@@ -706,20 +792,19 @@ function update(){
       const nose={x:e.x+(e.vx>0?e.w: -2), y:e.y+4, w:2, h:e.h-8};
       for(const b of level.solids){ if(rects(nose,b)) hitWall=true; }
       if(!onFloor || hitWall) e.vx*=-1;
+      else if(e.minX!=null && (e.x<e.minX || e.x>e.maxX)) e.vx*=-1;
+      if(e.minX!=null){
+        if(e.x<e.minX){ e.x=e.minX; e.vx=Math.abs(e.vx); }
+        else if(e.x>e.maxX){ e.x=e.maxX; e.vx=-Math.abs(e.vx); }
+      }
       // gravity stick
       e.y+=2; let landed=false;
       for(const b of [...level.solids,...level.platforms]){
         if(rects(e,b) && e.y+e.h>b.y && e.y<b.y+10){ e.y=b.y-e.h; landed=true; }
       }
       if(!landed) e.y-=2;
-    } else if(e.type==='bat'){
-      e.x+=e.vx;
-      e.y=e.baseY + Math.sin(animT*0.08 + e.x*0.01)*18;
-      if(e.x<40||e.x>level.w-60) e.vx*=-1;
-    } else if(e.type==='rumor'){
-      e.x+=e.vx;
-      e.y=e.baseY + Math.sin(animT*0.05 + e.x*0.02)*12;
-      if(e.x<40||e.x>level.w-60) e.vx*=-1;
+    } else {
+      tickFlyer(e);
     }
 
     for(const fb of fireballs){
@@ -991,12 +1076,70 @@ function drawSpiderArt(c,t){
 }
 
 function drawBatArt(c,t){
-  const flap = Math.sin(t*0.28)*3;
+  const flap = Math.sin(t*0.35)*6;
   c.save(); c.translate(0, flap);
   const h = 44, w = h * (spriteReady('bat') ? SPRITES.bat.naturalWidth/SPRITES.bat.naturalHeight : 0.78);
   drawSoftShadow(c, 0, h*0.4, w*0.36, 3.5);
   drawSpriteImg(c, 'bat', -w/2, -h*0.55, w, h, false);
   c.restore();
+}
+
+function drawMothArt(c,t,pattern){
+  const flap = Math.sin(t*0.55);
+  const lane = pattern==='lane';
+  const wing = lane ? '#26c6da' : '#ffb300';
+  const wingDeep = lane ? '#00838f' : '#ef6c00';
+  c.save();
+  c.translate(0, flap*3);
+  // wings — wide so the flyer reads as airborne even at a glance
+  c.fillStyle = wingDeep;
+  c.beginPath(); c.ellipse(-18, flap*7, 20, 11+flap*3, -0.5, 0, Math.PI*2); c.fill();
+  c.beginPath(); c.ellipse(18, flap*7, 20, 11+flap*3, 0.5, 0, Math.PI*2); c.fill();
+  c.fillStyle = wing;
+  c.globalAlpha = 0.92;
+  c.beginPath(); c.ellipse(-16, flap*5, 15, 8, -0.35, 0, Math.PI*2); c.fill();
+  c.beginPath(); c.ellipse(16, flap*5, 15, 8, 0.35, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+  c.strokeStyle = 'rgba(255,255,255,0.8)';
+  c.lineWidth = 1.4;
+  c.beginPath();
+  c.moveTo(-4,0); c.lineTo(-26, flap*10-2);
+  c.moveTo(4,0); c.lineTo(26, flap*10-2);
+  c.stroke();
+  c.fillStyle = '#3e2723';
+  c.beginPath(); c.ellipse(0, 3, 5, 13, 0, 0, Math.PI*2); c.fill();
+  c.fillStyle = lane ? '#b2ebf2' : '#fff59d';
+  c.beginPath(); c.ellipse(0, 2, 3.2, 8, 0, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#ffeb3b';
+  c.beginPath(); c.arc(0, -10, 7, 0, Math.PI*2); c.fill();
+  c.strokeStyle = '#3e2723'; c.lineWidth = 1.6;
+  c.beginPath();
+  c.moveTo(-2,-16); c.quadraticCurveTo(-10,-24,-8,-26);
+  c.moveTo(2,-16); c.quadraticCurveTo(10,-24,8,-26);
+  c.stroke();
+  c.fillStyle = '#fff';
+  c.beginPath(); c.arc(-2.6,-11,2.2,0,Math.PI*2); c.arc(2.6,-11,2.2,0,Math.PI*2); c.fill();
+  c.fillStyle = '#1a1208';
+  c.beginPath(); c.arc(-2.4,-11,1.1,0,Math.PI*2); c.arc(2.8,-11,1.1,0,Math.PI*2); c.fill();
+  c.restore();
+}
+
+function tickFlyer(e){
+  e.x+=e.vx;
+  const minX=e.minX!=null?e.minX:40;
+  const maxX=e.maxX!=null?e.maxX:level.w-60;
+  if(e.x<minX){ e.x=minX; e.vx=Math.abs(e.vx); }
+  else if(e.x>maxX){ e.x=maxX; e.vx=-Math.abs(e.vx); }
+  const freq=e.freq||0.07;
+  const amp=e.amp!=null?e.amp:18;
+  const phase=e.phase||0;
+  const s=Math.sin(animT*freq+phase);
+  const wave=e.pattern==='swoop' ? Math.sign(s)*Math.pow(Math.abs(s),0.55) : s;
+  let y=(e.baseY!=null?e.baseY:e.y)+wave*amp;
+  const floorY=level.h-2*TILE-e.h-4;
+  if(y>floorY) y=floorY;
+  if(y<8) y=8;
+  e.y=y;
 }
 
 function drawRumorArt(c,t){
@@ -1070,6 +1213,7 @@ function drawEnemy(e){
   ctx.scale((e.vx>=0?-1:1)*1.15, 1.15); // sheet faces left
   if(e.type==='spider') drawSpiderArt(ctx, animT);
   else if(e.type==='bat') drawBatArt(ctx, animT);
+  else if(e.type==='moth') drawMothArt(ctx, animT, e.pattern);
   else if(e.type==='rumor') drawRumorArt(ctx, animT);
   ctx.restore();
 }
@@ -1221,6 +1365,20 @@ function drawTitleMascots(){
     wrap.appendChild(lab);
     row.appendChild(wrap);
   });
+  const mothWrap=document.createElement('div');
+  mothWrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:2px';
+  const mothCv=document.createElement('canvas'); mothCv.width=140; mothCv.height=150;
+  const mg=mothCv.getContext('2d');
+  mg.fillStyle='rgba(255,255,255,0.07)'; mg.beginPath(); roundRectPath(mg,6,6,128,138,18); mg.fill();
+  mg.save(); mg.translate(70,82); mg.scale(1.65,1.65);
+  drawMothArt(mg, 1.2, 'swoop');
+  mg.restore();
+  mothWrap.appendChild(mothCv);
+  const mothLab=document.createElement('div');
+  mothLab.textContent='飛針蜂';
+  mothLab.style.cssText='font-size:12px;color:#ffd700;font-weight:800;text-shadow:0 1px 3px #000';
+  mothWrap.appendChild(mothLab);
+  row.appendChild(mothWrap);
 }
 
 function roundRectCtx(x,a,b,c,d,r){
