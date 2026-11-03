@@ -2266,19 +2266,25 @@ function renderQuestion(){
     input.autocomplete = 'off';
     input.setAttribute('autocapitalize','off');
     const submit = document.createElement('button');
+    submit.type = 'button';
     submit.className = 'btn btn-gold';
     submit.textContent = 'Check';
     const check = () => {
       const raw = (input.value || '').trim().toLowerCase();
-      const ok = item.accept.some(a => raw === a.toLowerCase() || raw.replace(/\s+/g,' ') === a.toLowerCase());
+      const collapsed = raw.replace(/\s+/g, ' ');
+      const accept = Array.isArray(item.accept) ? item.accept : [];
+      const ok = accept.some(a => {
+        const want = String(a).trim().toLowerCase();
+        return raw === want || collapsed === want;
+      });
       grade(ok, submit, () => {
         input.disabled = true; submit.disabled = true;
-        submit.classList.add(ok ? 'btn-green' : '');
-        if(!ok){
+        if(ok) submit.classList.add('btn-green');
+        if(!ok && accept.length){
           const ans = document.createElement('div');
           ans.className = 'tiny';
           ans.style.marginTop = '6px';
-          ans.textContent = 'Accepted answer: ' + item.accept[0];
+          ans.textContent = 'Accepted answer: ' + accept[0];
           box.appendChild(ans);
         }
       });
@@ -2300,7 +2306,11 @@ function grade(correct, _btn, markFn){
     save();
     toast('Sure Cast Seal saved this answer!');
   }
-  if(markFn) markFn();
+  try {
+    if(markFn) markFn();
+  } catch (err) {
+    console.error(err);
+  }
   const item = quiz.questions[quiz.index];
   if(correct) quiz.correct += 1;
   const tip = document.getElementById('quiz-tip');
