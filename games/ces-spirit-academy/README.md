@@ -20,5 +20,8 @@ Open the folder in a browser:
 - Player: `cesSpiritAcademy_v1::<CLASS>-<No>`
 - Session: `cesSpiritAcademy_session_v1`
 
+## Spirits
+Player Spirits (Gold, Wood, Water, Fire, Earth) use cutouts at `art/spirits/*.webp`. Hatchling through Apex share that artwork and grow with the on-screen scale and glow. Open `index.html` from this folder so the relative paths resolve.
+
 ## Foes
 Quest stages use anime-style monster portraits under `art/foes/*.webp` (wolves, dragons, lion guardian, twin hound). Open `index.html` from this folder so relative art paths resolve.
