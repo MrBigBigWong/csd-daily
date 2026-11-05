@@ -264,7 +264,7 @@ html,body{background:#1a1030;color:var(--text)}
 .screen::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(20,16,48,.42));z-index:0}
 .screen > *{position:relative;z-index:1}
 #screen-login,#screen-title{background-image:url('art/bg_title.webp')}
-#screen-home,#screen-select,#screen-name,#screen-badges,#screen-howto,#screen-result{background-image:url('art/bg_home.webp')}
+#screen-home,#screen-select,#screen-name,#screen-badges,#screen-howto,#screen-result,#screen-leaderboard{background-image:url('art/bg_home.webp')}
 #screen-quest{background-image:url('art/bg_quest.webp')}
 #screen-battle,#screen-quiz{background-image:url('art/bg_battle.webp')}
 h1.logo{background:linear-gradient(135deg,#ffd54f,#ff8ec8,#81d4fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -322,6 +322,17 @@ h2{color:#ff7eb9!important;text-shadow:0 1px 0 #fff,0 2px 8px rgba(255,120,180,.
 .gacha-box{font-size:4rem;animation:pulseGlow 1s ease infinite}
 .hub-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .hub-actions .span2{grid-column:1 / -1}
+.lb-you{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.lb-you .pts{font-weight:900;color:#7c6cff;font-size:1.15rem}
+.lb-list{display:flex;flex-direction:column;gap:8px;margin:10px 0 16px}
+.lb-row{display:grid;grid-template-columns:46px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.88);border:2px solid #fff;box-shadow:0 4px 12px rgba(80,40,140,.12)}
+.lb-row.me{border-color:#ff6bb5;box-shadow:0 0 0 2px #ffd54f,0 6px 14px rgba(255,107,181,.25);background:linear-gradient(160deg,#fff,#ffe6f3)}
+.lb-rank{font-weight:900;text-align:center;font-size:1.05rem;color:#4a3a6a}
+.lb-row.me .lb-rank{color:#c2185b}
+.lb-name{font-weight:900;font-size:.95rem;color:#2a2a4a}
+.lb-meta{font-size:.75rem;color:#5a5a7a;margin-top:2px}
+.lb-pts{font-weight:900;color:#4a3a6a;text-align:right;white-space:nowrap}
+.lb-empty{text-align:center;padding:16px 8px}
 
 /* ===== Playtest polish ===== */
 .login-hero{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px}
@@ -412,6 +423,7 @@ h2{color:#ff7eb9!important;text-shadow:0 1px 0 #fff,0 2px 8px rgba(255,120,180,.
       <div class="btn-row">
         <button class="btn btn-gold btn-lg" id="btn-start">Start Adventure</button>
         <button class="btn btn-ghost" id="btn-howto-title">How to Play</button>
+        <button class="btn btn-ghost" id="btn-leaderboard-title" type="button">Leaderboard</button>
       </div>
       <p class="tiny" style="text-align:center;margin-top:8px" id="title-save-hint"></p>
     </div>
@@ -485,6 +497,7 @@ h2{color:#ff7eb9!important;text-shadow:0 1px 0 #fff,0 2px 8px rgba(255,120,180,.
     </div>
     <div class="hub-actions">
       <button class="btn btn-gold span2" id="btn-quest">🗺️ Quest Map</button>
+      <button class="btn span2" id="btn-leaderboard" type="button">🏆 Season Leaderboard</button>
       <button class="btn" id="btn-daily">Daily Quest</button>
       <button class="btn" id="btn-practice">Practice</button>
       <button class="btn btn-train-move" id="btn-train-move">⚡ Train Move</button>
@@ -598,6 +611,26 @@ h2{color:#ff7eb9!important;text-shadow:0 1px 0 #fff,0 2px 8px rgba(255,120,180,.
     <div class="btn-row"><button class="btn btn-gold" id="btn-result-home">Back to Home</button></div>
   </div>
 
+  <div id="screen-leaderboard" class="screen">
+    <h2 style="text-align:center">Season Leaderboard</h2>
+    <p class="sub">Year group · 10 points for each correct answer</p>
+    <div class="panel" id="lb-you">
+      <div class="lb-you">
+        <div>
+          <div style="font-weight:900" id="lb-you-name">Your rank</div>
+          <div class="tiny" id="lb-you-meta">Class · Student No.</div>
+        </div>
+        <div class="pts" id="lb-you-pts">—</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" id="btn-lb-refresh" type="button">Refresh</button>
+      <button class="btn btn-ghost" id="btn-lb-back" type="button">Back</button>
+    </div>
+    <p class="tiny" id="lb-status" style="text-align:center;margin-top:8px"></p>
+    <div id="lb-list" class="lb-list"></div>
+  </div>
+
   <div id="screen-badges" class="screen">
     <h2 style="text-align:center">Badge Board</h2>
     <p class="sub">Collect achievements as you grow</p>
@@ -648,6 +681,11 @@ const SPIRIT_ART = {
   fire:  'art/spirits/fire.webp',
   earth: 'art/spirits/earth.webp'
 };
+
+// Season leaderboard: paste the Apps Script web app /exec URL on the next line.
+// Empty string skips network calls and shows "Leaderboard not connected yet."
+const LEADERBOARD_URL = 'https://script.google.com/macros/s/AKfycbzpZu0rM--eWb2Jr9ytmrHeBE_BYtluyqtBvLOo-fyiNb1z1fxXPXfqLtRwhHXodhHA/exec';
+const LB_CACHE_KEY = 'cesSpiritAcademy_leaderboard_v1';
 
 const MAX_LEVEL = 100;
 const DAILY_COUNT = 10;
@@ -1005,6 +1043,7 @@ function resolveBattleAnswer(correct, _btn, markFn){
     battle.correct += 1;
     state.lifetimeCorrect = (state.lifetimeCorrect||0) + 1;
     battle.combo += 1;
+    awardSeasonPoints(battle.daily ? 'daily' : 'quest');
   } else {
     battle.combo = 0;
   }
@@ -1537,6 +1576,201 @@ function stageName(s){
 
 function hkToday(){
   return new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Hong_Kong', year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date());
+}
+
+function leaderboardConnected(){
+  return typeof LEADERBOARD_URL === 'string' && LEADERBOARD_URL.trim().length > 0;
+}
+function lbEsc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+}
+function trainerIdentity(){
+  const className = (currentProfile && currentProfile.className) || state.className || '';
+  const studentNo = String((currentProfile && currentProfile.studentNo) || state.studentNo || '');
+  const displayName = (currentProfile && currentProfile.displayName) || state.displayName || 'Trainer';
+  const spirit = (state.spirit && (state.spirit.species || state.spirit.element)) || '';
+  const rankKey = String(className).trim().toUpperCase().replace(/\s+/g,'') + '|' + studentNo.trim().replace(/\s+/g,'');
+  return { className, studentNo, displayName, spirit, rankKey };
+}
+function loadLbCache(){
+  try{
+    const raw = localStorage.getItem(LB_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function saveLbCache(cache){
+  try{ localStorage.setItem(LB_CACHE_KEY, JSON.stringify(cache)); }catch(e){}
+}
+function leaderboardUrl(params){
+  const u = new URL(LEADERBOARD_URL.trim());
+  Object.keys(params || {}).forEach(k => {
+    if(params[k] != null && params[k] !== '') u.searchParams.set(k, String(params[k]));
+  });
+  return u.toString();
+}
+function rowRankKey(row){
+  if(row && row.rankKey) return String(row.rankKey).trim().toUpperCase();
+  const c = String((row && row.className) || '').trim().toUpperCase().replace(/\s+/g,'');
+  const n = String((row && row.studentNo) || '').trim().replace(/\s+/g,'');
+  return c + '|' + n;
+}
+let lbBackScreen = 'screen-home';
+let lbLoading = false;
+
+function paintLeaderboard(result){
+  const list = document.getElementById('lb-list');
+  const status = document.getElementById('lb-status');
+  const youName = document.getElementById('lb-you-name');
+  const youMeta = document.getElementById('lb-you-meta');
+  const youPts = document.getElementById('lb-you-pts');
+  if(!list) return;
+  const who = trainerIdentity();
+  const board = (result && Array.isArray(result.board)) ? result.board : [];
+  const mine = board.find(row => rowRankKey(row) === who.rankKey.toUpperCase());
+  const myRank = mine ? (mine.rank || (board.indexOf(mine) + 1)) : null;
+  const myPts = mine ? (Number(mine.totalPoints) || 0) : 0;
+  youName.textContent = who.displayName || 'Your rank';
+  if(!leaderboardConnected() && !board.length){
+    youMeta.textContent = (who.className || 'Class') + ' · No.' + (who.studentNo || '?');
+    youPts.textContent = '—';
+    status.textContent = 'Leaderboard not connected yet.';
+    list.innerHTML = '<div class="panel lb-empty"><p>The season board will appear here after the teacher connects the Apps Script web app.</p><p class="tiny" style="margin-top:6px">You can keep playing. Correct answers are saved on this device.</p></div>';
+    return;
+  }
+  youMeta.textContent = (who.className || 'Class') + ' · No.' + (who.studentNo || '?')
+    + (myRank ? (' · Rank ' + myRank) : ' · Not ranked yet');
+  youPts.textContent = (mine ? myPts : 0) + ' pts';
+  const bits = [];
+  if(result && result.fromCache && !result.stale) bits.push('Updated for ' + (result.hkDate || hkToday()) + ' (HK).');
+  if(result && result.updatedAt) bits.push('Sheet sync ' + result.updatedAt);
+  if(result && result.stale) bits.push('Showing the saved board. Live refresh failed.');
+  if(result && result.error && !(result.board && result.board.length)) bits.push('Couldn’t load the leaderboard. You can keep playing.');
+  if(result && result.message) bits.push(result.message);
+  status.textContent = bits.join(' ');
+  if(!board.length){
+    list.innerHTML = '<div class="panel lb-empty"><p>' + lbEsc((result && result.error) ? 'Leaderboard unavailable right now.' : 'No scores yet this season.') + '</p><p class="tiny" style="margin-top:6px">Each correct answer is worth 10 points. Battles still work offline.</p></div>';
+    return;
+  }
+  list.innerHTML = board.map((row, i) => {
+    const key = rowRankKey(row);
+    const me = key && key === who.rankKey.toUpperCase();
+    const rank = row.rank || (i + 1);
+    const name = row.displayName || 'Trainer';
+    const cls = (row.className || '') + ' · No.' + (row.studentNo || '?');
+    const spirit = row.spirit ? (' · ' + row.spirit) : '';
+    const pts = Number(row.totalPoints) || 0;
+    return '<div class="lb-row' + (me ? ' me' : '') + '" data-rank-key="' + lbEsc(key) + '">'
+      + '<div class="lb-rank">' + lbEsc(rank) + '</div>'
+      + '<div><div class="lb-name">' + lbEsc(name) + (me ? ' · You' : '') + '</div>'
+      + '<div class="lb-meta">' + lbEsc(cls + spirit) + '</div></div>'
+      + '<div class="lb-pts">' + lbEsc(pts) + '</div></div>';
+  }).join('');
+}
+
+async function refreshLeaderboard(force){
+  const btn = document.getElementById('btn-lb-refresh');
+  if(!leaderboardConnected()){
+    paintLeaderboard({ disconnected:true, board:[] });
+    return;
+  }
+  const today = hkToday();
+  const cache = loadLbCache();
+  if(!force && cache && cache.hkDate === today && Array.isArray(cache.board)){
+    paintLeaderboard({ ok:true, board:cache.board, updatedAt:cache.updatedAt, hkDate:cache.hkDate, fromCache:true });
+    return;
+  }
+  if(cache && Array.isArray(cache.board) && cache.board.length){
+    paintLeaderboard({ ok:true, board:cache.board, updatedAt:cache.updatedAt, hkDate:cache.hkDate, fromCache:true, stale: cache.hkDate !== today });
+  }
+  if(lbLoading) return;
+  lbLoading = true;
+  if(btn) btn.disabled = true;
+  const status = document.getElementById('lb-status');
+  if(status && document.getElementById('screen-leaderboard').classList.contains('active')){
+    status.textContent = (status.textContent ? status.textContent + ' ' : '') + 'Refreshing…';
+  }
+  try{
+    const res = await fetch(leaderboardUrl({ action:'board' }), { method:'GET', redirect:'follow', cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(!data || data.ok === false) throw new Error((data && (data.error || data.message)) || 'Board unavailable');
+    const board = Array.isArray(data.board) ? data.board : [];
+    const saved = { hkDate: today, board: board, updatedAt: data.updatedAt || '' };
+    saveLbCache(saved);
+    paintLeaderboard({ ok:true, board: board, updatedAt: saved.updatedAt, hkDate: today, fromCache:false });
+  }catch(err){
+    const fresh = loadLbCache();
+    if(fresh && Array.isArray(fresh.board) && fresh.board.length){
+      paintLeaderboard({
+        ok:true,
+        board: fresh.board,
+        updatedAt: fresh.updatedAt,
+        hkDate: fresh.hkDate,
+        fromCache:true,
+        stale:true,
+        error: (err && err.message) || 'Refresh failed'
+      });
+    }else{
+      paintLeaderboard({ ok:false, board:[], error: (err && err.message) || 'Refresh failed' });
+    }
+  }finally{
+    lbLoading = false;
+    if(btn) btn.disabled = false;
+  }
+}
+
+function openLeaderboard(back){
+  lbBackScreen = back || (state.spirit ? 'screen-home' : 'screen-title');
+  showScreen('screen-leaderboard');
+  refreshLeaderboard(false).catch(()=>{});
+}
+
+function maybePrefetchLeaderboard(){
+  if(!leaderboardConnected()) return;
+  const cache = loadLbCache();
+  if(cache && cache.hkDate === hkToday() && Array.isArray(cache.board)) return;
+  refreshLeaderboard(false).catch(()=>{});
+}
+
+function awardSeasonPoints(source){
+  try{
+    if(!leaderboardConnected()) return;
+    const who = trainerIdentity();
+    if(!who.className || !who.studentNo) return;
+    const payload = {
+      action:'score',
+      className: who.className,
+      class: who.className,
+      studentNo: who.studentNo,
+      displayName: who.displayName,
+      spirit: who.spirit,
+      correct: 1,
+      source: source || 'play'
+    };
+    submitSeasonScore(payload).catch(()=>{});
+  }catch(e){}
+}
+
+async function submitSeasonScore(payload){
+  const endpoint = LEADERBOARD_URL.trim();
+  try{
+    const res = await fetch(endpoint, {
+      method:'POST',
+      redirect:'follow',
+      headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error('POST ' + res.status);
+    const data = await res.json().catch(() => null);
+    if(data && data.ok === false) throw new Error(data.error || 'Score rejected');
+    return data;
+  }catch(postErr){
+    const res = await fetch(leaderboardUrl(payload), { method:'GET', redirect:'follow', cache:'no-store' });
+    if(!res.ok) throw postErr;
+    return res.json().catch(() => null);
+  }
 }
 function daySeed(str){
   let h = 2166136261;
@@ -2111,6 +2345,7 @@ function updateHome(){
     const mv = MOVES[el];
     hcap.textContent = 'Tap Train Move to unleash ' + (mv ? mv.name : 'your attack') + '!';
   }
+  maybePrefetchLeaderboard();
 }
 
 function showEvolveIfNeeded(cb){
@@ -2314,7 +2549,10 @@ function grade(correct, _btn, markFn){
     console.error(err);
   }
   const item = quiz.questions[quiz.index];
-  if(correct) quiz.correct += 1;
+  if(correct){
+    quiz.correct += 1;
+    awardSeasonPoints(quiz.mode === 'daily' ? 'daily' : 'practice');
+  }
   const tip = document.getElementById('quiz-tip');
   const nextBtn = document.getElementById('btn-quiz-next');
   nextBtn.style.display = 'none';
@@ -2493,6 +2731,7 @@ function showLoginScreen(opts){
 }
 function enterAppAfterLogin(){
   refreshTitleHint();
+  maybePrefetchLeaderboard();
   if(state.spirit){
     showScreen('screen-home');
     updateHome();
@@ -2626,6 +2865,18 @@ function wire(){
     else { showScreen('screen-select'); }
   };
   document.getElementById('btn-howto-title').onclick = () => showScreen('screen-howto');
+  const btnLbTitle = document.getElementById('btn-leaderboard-title');
+  if(btnLbTitle) btnLbTitle.onclick = () => openLeaderboard('screen-title');
+  const btnLb = document.getElementById('btn-leaderboard');
+  if(btnLb) btnLb.onclick = () => openLeaderboard('screen-home');
+  const btnLbBack = document.getElementById('btn-lb-back');
+  if(btnLbBack) btnLbBack.onclick = () => {
+    const back = lbBackScreen || 'screen-home';
+    showScreen(back);
+    if(back === 'screen-home') updateHome();
+  };
+  const btnLbRefresh = document.getElementById('btn-lb-refresh');
+  if(btnLbRefresh) btnLbRefresh.onclick = () => { refreshLeaderboard(true).catch(()=>{}); };
   document.getElementById('btn-select-back').onclick = () => showScreen('screen-title');
   document.getElementById('btn-select-next').onclick = () => startNaming();
   document.getElementById('btn-name-skip').onclick = () => confirmSpirit('');
