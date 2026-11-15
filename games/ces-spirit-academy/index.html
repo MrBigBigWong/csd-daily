@@ -271,6 +271,9 @@ h1.logo{background:linear-gradient(135deg,#ffd54f,#ff8ec8,#81d4fa);-webkit-backg
 h2{color:#ff7eb9!important;text-shadow:0 1px 0 #fff,0 2px 8px rgba(255,120,180,.35)}
 .panel{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,240,250,.8))!important;border:2px solid #fff!important;color:var(--text)!important;box-shadow:0 8px 24px rgba(80,40,120,.18),inset 0 1px 0 #fff!important}
 .sub,.tiny,.pin-hint{color:var(--muted)!important}
+.name-warn{color:#b71c1c!important;font-weight:800}
+#spirit-name-status{text-align:center;min-height:1.2em;margin:2px 0 0}
+#spirit-name-status:not(:empty){background:rgba(255,255,255,.92);border-radius:10px;padding:6px 8px}
 .btn{border:2px solid rgba(255,255,255,.85);border-radius:14px;background:linear-gradient(135deg,#9b8cff,#6c5ce7);box-shadow:0 4px 0 var(--btnShadow),0 8px 16px rgba(80,60,180,.25)}
 .btn-gold{background:linear-gradient(135deg,#ffd54f,#ffb300)!important;color:#4a2c00!important;box-shadow:0 4px 0 #c88700,0 8px 16px rgba(255,180,0,.3)!important}
 .btn-ghost{background:rgba(255,255,255,.55)!important;color:#4a3a6a!important;box-shadow:0 3px 0 rgba(100,80,140,.25)!important}
@@ -444,6 +447,7 @@ h2{color:#ff7eb9!important;text-shadow:0 1px 0 #fff,0 2px 8px rgba(255,120,180,.
     <p class="sub">Optional — leave blank to keep the species name</p>
     <div class="sprite-wrap lg bob" id="name-sprite"></div>
     <input class="name-input" id="spirit-name-input" maxlength="16" placeholder="Nickname (max 16)" autocomplete="off">
+    <p class="tiny name-warn" id="spirit-name-status" role="alert"></p>
     <div class="btn-row">
       <button class="btn btn-ghost" id="btn-name-skip">Keep default</button>
       <button class="btn btn-gold" id="btn-name-ok">Confirm</button>
@@ -757,6 +761,187 @@ const FOE_SVG = '';
 let battle = null; // runtime battle session
 let pendingGacha = null;
 
+/* NAME_SAFETY_START */
+const SCHOOL_SAFE_NAME_MESSAGE = 'Please choose a school-safe name.';
+
+// STEM: blocked even inside a longer single word. Keep this list to terms that
+// are not ordinary English words or name fragments.
+const NAME_BLOCK_LATIN_STEMS = [
+  'fuck','fck','fock','phuck','fvck','fcuk','fukc',
+  'shit','shyt','bitch','biatch','btch',
+  'asshole','asshat','asswipe','assclown','assface',
+  'dumbass','jackass','badass','fatass','smartass','lardass','hardass','kickass',
+  'arsehole','bastard','dammit','damnit','goddamn','goddam','damn',
+  'pussy','dickhead','dickface','cocksuck','cockhead',
+  'faggot','whore','slut','wanker','bollock',
+  'porno','porn','blowjob','handjob','analsex',
+  'penis','vagina','vulva','jizz','piss','titties','boob',
+  'sexual','sexy','sexting',
+  'diulei','diulai','diunei','diunai','diuyou',
+  'diuleiloumou','diuleilomo','diuneiloumou','diuneloumou',
+  'dllm','dnlm','diaoni','diaonima',
+  'lanjiao','lanjiu','lanjau','langau','lanchau',
+  'hamgacaan','hamgaacaan','hamgachan','hamgaachan','hamgacan','hamgaacan',
+  'hamkacaan','hamkaacaan','hamkachan','hamgatsan','hamgaatsan',
+  'pukgai','pokgai',
+  'caonima','tsaonima','shabi',
+  'nmsl','nmlgb','wdnmd','cnmb','mlgb',
+  'nimade','tamade','nimabi','rinima','gannima','ganniang',
+  'ongau','chauhai','chouhai'
+];
+
+// TOKEN: a whole word after spaces and decoration are removed.
+// Short words that sit inside real words (class, shell, title, grape) stay here.
+const NAME_BLOCK_LATIN_TOKENS = [
+  'ass','asses','azz','arse','hell',
+  'cock','cocks','dick','dicks','tit','tits',
+  'cum','anal','anus','sex','hoe','fag','fags',
+  'cunt','cunts','twat','prick','dyke','chink','spic','kike',
+  'retard','retarded','tranny','rape','crap','wank','wanks',
+  'wtf','stfu','gtfo','lmfao','milf','horny','nude','nudes','sht',
+  'rapist',
+  'fuk','phuk','nigger','niggers','nigga','niggas',
+  'diu','hmm','sb','nts','hgc','tmd','nmd','cnm','rnm','on9','on99'
+];
+
+// EXACT: the entire name is this slang spelling. Not applied to each word,
+// so Alan, Lana, Hailey, Hai Ming and Lan Mei still pass. Cao / Diao are
+// surnames, so only the longer phrases (caonima, diaonima) are blocked.
+const NAME_BLOCK_LATIN_EXACT = ['hai','lan'];
+
+// Single characters that are vulgar on their own in a student name.
+const NAME_BLOCK_CJK_CHARS = ['屌','𨳒','𨳊','𠺘','閪','撚','屄','肏','尻','𡳞'];
+
+// Phrases. Mild words (笨, 傻瓜) are intentionally not listed.
+const NAME_BLOCK_CJK_PHRASES = [
+  '冚家','仆街','僕街','撲街','扑街',
+  '戇居','戇鳩','死仔','八婆',
+  '操你','操妳','操死','操蛋','操逼','操你妈','操你媽','操尼',
+  '草你','草尼','草泥马','草泥馬','草擬媽','草拟妈','艹你','艹尼','艹泥马','艹泥馬',
+  '干你','幹你','干妳','幹妳','干尼','幹尼','干死','幹死',
+  '干你娘','幹你娘','干你妈','干你媽','幹你妈','幹你媽',
+  '日你','日尼','日你妈','日你媽','日你娘',
+  '傻逼','傻屄','傻比','傻屌','傻吊','傻b','傻叉','煞笔','煞筆','煞逼','沙雕',
+  '他妈','他媽','妈的','媽的','妈逼','媽逼','你妈','你媽',
+  '去你妈','去你媽','妈了个逼','媽了個逼','尼玛','尼瑪','特么','特麼',
+  '卧槽','握草','我肏',
+  '脑残','腦殘','智障','低能','白痴','白癡','贱人','賤人','婊子','妓女',
+  '去死','死全家','死妈','死媽','王八蛋','杂种','雜種','畜生','狗日',
+  '鸡巴','雞巴','鸡鸡','雞雞',
+  '装逼','裝逼','牛逼','二逼','逗逼',
+  '淫荡','淫蕩','阴道','陰道','阴茎','陰莖'
+];
+
+// 操 is also a normal character (gymnastics, conduct). Block it only outside those words.
+const NAME_CAO_OK = ['體操','体操','操作','操心','操場','操场','操守','操行','操勞','操劳','情操','早操','出操','收操','軍操','军操','課操','课操'];
+
+function leetMap(s, oneAs){
+  return s
+    .replace(/[@4]/g, 'a')
+    .replace(/3/g, 'e')
+    .replace(/[|!]/g, 'i')
+    .replace(/1/g, oneAs)
+    .replace(/0/g, 'o')
+    .replace(/[$5]/g, 's')
+    .replace(/7/g, 't')
+    .replace(/\+/g, 't');
+}
+function squeezeToOne(s){ return s.replace(/([a-z0-9])\1{2,}/g, '$1'); }
+function squeezeToTwo(s){ return s.replace(/([a-z0-9])\1{2,}/g, '$1$1'); }
+function latinForms(mapped){
+  const parts = mapped.split(/[^a-z0-9]+/).filter(Boolean);
+  const flat = parts.join('');
+  return {
+    keys: [flat, squeezeToOne(flat), squeezeToTwo(flat)],
+    tokenSets: [parts, parts.map(squeezeToOne), parts.map(squeezeToTwo)]
+  };
+}
+function maskedProfanity(mapped){
+  // Stars standing in for letters: f**k, sh*t. Ordinary words have no stars.
+  if(mapped.indexOf('*') < 0) return false;
+  if(/f[^a-z0-9]*k/.test(mapped)) return true;
+  if(/sh[^a-z0-9]*t/.test(mapped)) return true;
+  return false;
+}
+function latinVariantBlocked(mapped){
+  if(maskedProfanity(mapped)) return true;
+  const forms = latinForms(mapped);
+  for(let i=0;i<NAME_BLOCK_LATIN_EXACT.length;i++){
+    const word = NAME_BLOCK_LATIN_EXACT[i];
+    if(forms.keys.some(k => k === word)) return true;
+  }
+  for(let i=0;i<NAME_BLOCK_LATIN_TOKENS.length;i++){
+    const word = NAME_BLOCK_LATIN_TOKENS[i];
+    if(forms.keys.some(k => k === word)) return true;
+    if(forms.tokenSets.some(set => set.some(t => t === word))) return true;
+  }
+  for(let i=0;i<NAME_BLOCK_LATIN_STEMS.length;i++){
+    const stem = NAME_BLOCK_LATIN_STEMS[i];
+    if(forms.keys.some(k => k.includes(stem))) return true;
+  }
+  return false;
+}
+function latinBlocked(rawLower){
+  return latinVariantBlocked(leetMap(rawLower, 'i')) || latinVariantBlocked(leetMap(rawLower, 'l'));
+}
+function cjkFlat(s){
+  let out = '';
+  for(const ch of s){
+    const c = ch.codePointAt(0);
+    const keep = (c >= 0x3400 && c <= 0x9fff) || (c >= 0xf900 && c <= 0xfaff) ||
+      (c >= 0x20000 && c <= 0x3ffff) || (c >= 48 && c <= 57) || (c >= 97 && c <= 122);
+    if(keep) out += ch;
+  }
+  return out;
+}
+function cjkHasVulgarCao(flat){
+  if(!flat.includes('操')) return false;
+  const ok = NAME_CAO_OK.slice().sort((a,b) => b.length - a.length);
+  let rest = flat;
+  for(let n=0;n<8;n++){
+    let next = rest;
+    for(let i=0;i<ok.length;i++) next = next.split(ok[i]).join('');
+    if(next === rest) break;
+    rest = next;
+  }
+  return rest.includes('操');
+}
+function cjkBlocked(flat){
+  if(!flat) return false;
+  for(let i=0;i<NAME_BLOCK_CJK_CHARS.length;i++){
+    if(flat.includes(NAME_BLOCK_CJK_CHARS[i])) return true;
+  }
+  for(let i=0;i<NAME_BLOCK_CJK_PHRASES.length;i++){
+    if(flat.includes(NAME_BLOCK_CJK_PHRASES[i])) return true;
+  }
+  if(cjkHasVulgarCao(flat)) return true;
+  if(/^幹+$/.test(flat) || /^逼+$/.test(flat)) return true;
+  return false;
+}
+function isSchoolSafeName(name){
+  const raw = String(name == null ? '' : name)
+    .normalize('NFKC')
+    .replace(/[\u200B-\u200D\uFEFF\u2060\uFE00-\uFE0F]/g, '')
+    .trim()
+    .toLowerCase();
+  if(!raw) return true;
+  if(cjkBlocked(cjkFlat(raw))) return false;
+  if(latinBlocked(raw)) return false;
+  return true;
+}
+function schoolSafeNameRejection(name){
+  const trimmed = String(name == null ? '' : name).trim();
+  if(!trimmed || isSchoolSafeName(trimmed)) return '';
+  return SCHOOL_SAFE_NAME_MESSAGE;
+}
+function scrubSpiritNickname(st){
+  if(!st || !st.spirit || st.spirit.nickname == null || st.spirit.nickname === '') return false;
+  if(isSchoolSafeName(st.spirit.nickname)) return false;
+  st.spirit.nickname = null;
+  return true;
+}
+/* NAME_SAFETY_END */
+
 function ensureStateShape(st){
   if(!st.inventory) st.inventory = { xp15:0, sure:0, carePlus:0 };
   if(!st.questCleared) st.questCleared = {};
@@ -764,6 +949,7 @@ function ensureStateShape(st){
   if(typeof st.xpBoostActive !== 'boolean') st.xpBoostActive = false;
   if(typeof st.sureCastCharges !== 'number') st.sureCastCharges = 0;
   if(typeof st.lifetimeCorrect !== 'number') st.lifetimeCorrect = 0;
+  scrubSpiritNickname(st);
   return st;
 }
 
@@ -1899,7 +2085,13 @@ function readPlayerSave(id){
   try{
     const raw = localStorage.getItem(playerSaveKey(id));
     if(!raw) return null;
-    return ensureStateShape(Object.assign(defaultState(), JSON.parse(raw)));
+    const parsed = JSON.parse(raw);
+    const beforeNick = parsed && parsed.spirit ? parsed.spirit.nickname : null;
+    const st = ensureStateShape(Object.assign(defaultState(), parsed));
+    if(beforeNick && st.spirit && st.spirit.nickname == null){
+      try{ localStorage.setItem(playerSaveKey(id), JSON.stringify(st)); }catch(e){}
+    }
+    return st;
   }catch(e){ return null; }
 }
 function writePlayerSave(id, st){
@@ -2004,7 +2196,9 @@ function toast(msg){
 
 function nickname(){
   if(!state.spirit) return 'Spirit';
-  return state.spirit.nickname || state.spirit.species;
+  const nick = state.spirit.nickname;
+  if(nick && isSchoolSafeName(nick)) return nick;
+  return state.spirit.species || 'Spirit';
 }
 
 /* Question bank: original English items inspired by S.2 CES modules 2.1–2.2 only
@@ -2399,10 +2593,18 @@ function startNaming(){
   renderSprite(document.getElementById('name-sprite'), selectedElement, 1);
   document.getElementById('spirit-name-input').value = '';
   document.getElementById('spirit-name-input').placeholder = sp.name;
+  setSpiritNameStatus('');
   showScreen('screen-name');
 }
 
 function confirmSpirit(nick){
+  const trimmed = String(nick == null ? '' : nick).trim().slice(0,16);
+  const rejection = schoolSafeNameRejection(trimmed);
+  if(rejection){
+    setSpiritNameStatus(rejection);
+    return;
+  }
+  setSpiritNameStatus('');
   const sp = SPECIES.find(s => s.element === selectedElement);
   const keep = {
     pinHash: state.pinHash || null,
@@ -2413,7 +2615,7 @@ function confirmSpirit(nick){
     createdAt: state.createdAt || Date.now()
   };
   state = Object.assign(defaultState(), keep);
-  state.spirit = { element: sp.element, species: sp.name, nickname: (nick||'').trim().slice(0,16) || null };
+  state.spirit = { element: sp.element, species: sp.name, nickname: trimmed || null };
   state.lastCareDate = hkToday();
   save();
   showScreen('screen-home');
@@ -2652,7 +2854,14 @@ function doCare(kind){
 
 function setLoginStatus(msg){
   const el = document.getElementById('login-status');
-  if(el) el.textContent = msg || '';
+  if(!el) return;
+  el.textContent = msg || '';
+  el.classList.toggle('name-warn', msg === SCHOOL_SAFE_NAME_MESSAGE);
+}
+function setSpiritNameStatus(msg){
+  const el = document.getElementById('spirit-name-status');
+  if(!el) return;
+  el.textContent = msg || '';
 }
 function renderRosterList(){
   const wrap = document.getElementById('roster-wrap');
@@ -2818,6 +3027,12 @@ function tryLoginOrCreate(forceCreate){
     return;
   }
   displayName = displayName.slice(0,24);
+  const nameRejection = schoolSafeNameRejection(displayName);
+  if(nameRejection){
+    setLoginStatus(nameRejection);
+    document.getElementById('login-name-wrap').style.display = 'block';
+    return;
+  }
   const normClass = className.toUpperCase().replace(/\s+/g,'');
   const normNo = studentNo.replace(/\s+/g,'');
   let st = defaultState();
@@ -2881,6 +3096,8 @@ function wire(){
   document.getElementById('btn-select-next').onclick = () => startNaming();
   document.getElementById('btn-name-skip').onclick = () => confirmSpirit('');
   document.getElementById('btn-name-ok').onclick = () => confirmSpirit(document.getElementById('spirit-name-input').value);
+  const spiritNameInput = document.getElementById('spirit-name-input');
+  if(spiritNameInput) spiritNameInput.addEventListener('input', () => setSpiritNameStatus(''));
   document.getElementById('btn-daily').onclick = () => startDailyQuest();
   document.getElementById('btn-practice').onclick = () => startQuiz('practice');
   const btnQuest = document.getElementById('btn-quest');
